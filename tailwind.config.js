@@ -50,9 +50,29 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
-        serif: ["var(--font-serif)", "Georgia", "serif"],
-        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+        sans: [
+          "Anthropic Sans",
+          "var(--font-sans)",
+          "system-ui",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "Roboto",
+          "Helvetica Neue",
+          "Arial",
+          "sans-serif"
+        ],
+        serif: ["Anthropic Serif", "var(--font-serif)", "Georgia", "Times New Roman", "serif"],
+        mono: [
+          "Anthropic Mono",
+          "var(--font-mono)",
+          "ui-monospace",
+          "SF Mono",
+          "Monaco",
+          "Cascadia Code",
+          "Roboto Mono",
+          "monospace"
+        ],
       },
       borderRadius: {
         lg: "var(--radius)",
