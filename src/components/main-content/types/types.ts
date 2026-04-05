@@ -63,6 +63,7 @@ export type MainContentHeaderProps = {
   shouldShowTasksTab: boolean;
   isMobile: boolean;
   onMenuClick: () => void;
+  tokenBudget: { used?: number; total?: number } | null;
 };
 
 export type MainContentStateViewProps = {

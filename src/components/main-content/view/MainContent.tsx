@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import ChatInterface from '../../chat/view/ChatInterface';
 import FileTree from '../../file-tree/view/FileTree';
 import StandaloneShell from '../../standalone-shell/view/StandaloneShell';
@@ -56,6 +56,7 @@ function MainContent({
   const { tasksEnabled, isTaskMasterInstalled } = useTasksSettings() as TasksSettingsContextValue;
 
   const shouldShowTasksTab = Boolean(tasksEnabled && isTaskMasterInstalled);
+  const [tokenBudget, setTokenBudget] = useState<{ used?: number; total?: number } | null>(null);
 
   const {
     editingFile,
@@ -105,6 +106,7 @@ function MainContent({
         shouldShowTasksTab={shouldShowTasksTab}
         isMobile={isMobile}
         onMenuClick={onMenuClick}
+        tokenBudget={tokenBudget}
       />
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
@@ -134,6 +136,7 @@ function MainContent({
                 sendByCtrlEnter={sendByCtrlEnter}
                 externalMessageUpdate={externalMessageUpdate}
                 onShowAllTasks={tasksEnabled ? () => setActiveTab('tasks') : null}
+                onTokenBudgetChange={setTokenBudget}
               />
             </ErrorBoundary>
           </div>

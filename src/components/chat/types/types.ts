@@ -115,4 +115,5 @@ export interface ChatInterfaceProps {
   externalMessageUpdate?: number;
   onTaskClick?: (...args: unknown[]) => void;
   onShowAllTasks?: (() => void) | null;
+  onTokenBudgetChange?: (tokenBudget: { used?: number; total?: number } | null) => void;
 }

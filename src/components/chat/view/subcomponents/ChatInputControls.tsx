@@ -2,7 +2,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { PermissionMode, Provider } from '../../types/types';
 import ThinkingModeSelector from './ThinkingModeSelector';
-import TokenUsagePie from './TokenUsagePie';
 
 interface ChatInputControlsProps {
   permissionMode: PermissionMode | string;
@@ -10,7 +9,6 @@ interface ChatInputControlsProps {
   provider: Provider | string;
   thinkingMode: string;
   setThinkingMode: React.Dispatch<React.SetStateAction<string>>;
-  tokenBudget: { used?: number; total?: number } | null;
   slashCommandsCount: number;
   onToggleCommandMenu: () => void;
   hasInput: boolean;
@@ -26,7 +24,6 @@ export default function ChatInputControls({
   provider,
   thinkingMode,
   setThinkingMode,
-  tokenBudget,
   slashCommandsCount,
   onToggleCommandMenu,
   hasInput,
@@ -39,70 +36,6 @@ export default function ChatInputControls({
 
   return (
     <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
-      <button
-        type="button"
-        onClick={onModeSwitch}
-        className={`rounded-lg border px-2 py-0.5 text-xs font-medium transition-all duration-200 sm:px-2.5 sm:py-1 ${
-          permissionMode === 'default'
-            ? 'border-border/60 bg-muted/50 text-muted-foreground hover:bg-muted'
-            : permissionMode === 'acceptEdits'
-              ? 'border-green-300/60 bg-green-50 text-green-700 hover:bg-green-100 dark:border-green-600/40 dark:bg-green-900/15 dark:text-green-300 dark:hover:bg-green-900/25'
-              : permissionMode === 'bypassPermissions'
-                ? 'border-orange-300/60 bg-orange-50 text-orange-700 hover:bg-orange-100 dark:border-orange-600/40 dark:bg-orange-900/15 dark:text-orange-300 dark:hover:bg-orange-900/25'
-                : 'border-primary/20 bg-primary/5 text-primary hover:bg-primary/10'
-        }`}
-        title={t('input.clickToChangeMode')}
-      >
-        <div className="flex items-center gap-1">
-          <div
-            className={`h-1 w-1 rounded-full ${
-              permissionMode === 'default'
-                ? 'bg-muted-foreground'
-                : permissionMode === 'acceptEdits'
-                  ? 'bg-green-500'
-                  : permissionMode === 'bypassPermissions'
-                    ? 'bg-orange-500'
-                    : 'bg-primary'
-            }`}
-          />
-          <span>
-            {permissionMode === 'default' && t('codex.modes.default')}
-            {permissionMode === 'acceptEdits' && t('codex.modes.acceptEdits')}
-            {permissionMode === 'bypassPermissions' && t('codex.modes.bypassPermissions')}
-            {permissionMode === 'plan' && t('codex.modes.plan')}
-          </span>
-        </div>
-      </button>
-
-      {provider === 'claude' && (
-        <ThinkingModeSelector selectedMode={thinkingMode} onModeChange={setThinkingMode} onClose={() => {}} className="" />
-      )}
-
-      <TokenUsagePie used={tokenBudget?.used || 0} total={tokenBudget?.total || parseInt(import.meta.env.VITE_CONTEXT_WINDOW) || 160000} />
-
-      <button
-        type="button"
-        onClick={onToggleCommandMenu}
-        className="relative flex h-6 w-6 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground sm:h-7 sm:w-7"
-        title={t('input.showAllCommands')}
-      >
-        <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
-          />
-        </svg>
-        {slashCommandsCount > 0 && (
-          <span
-            className="absolute -right-0.5 -top-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground sm:h-4 sm:w-4 sm:text-[10px]"
-          >
-            {slashCommandsCount}
-          </span>
-        )}
-      </button>
-
       {hasInput && (
         <button
           type="button"

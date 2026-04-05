@@ -49,7 +49,6 @@ interface ChatComposerProps {
   onModeSwitch: () => void;
   thinkingMode: string;
   setThinkingMode: Dispatch<SetStateAction<string>>;
-  tokenBudget: { used?: number; total?: number } | null;
   slashCommandsCount: number;
   onToggleCommandMenu: () => void;
   hasInput: boolean;
@@ -106,7 +105,6 @@ export default function ChatComposer({
   onModeSwitch,
   thinkingMode,
   setThinkingMode,
-  tokenBudget,
   slashCommandsCount,
   onToggleCommandMenu,
   hasInput,
@@ -267,7 +265,7 @@ export default function ChatComposer({
         >
           <input {...getInputProps()} />
           <div ref={inputHighlightRef} aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
-            <div className="chat-input-placeholder block w-full whitespace-pre-wrap break-words py-1.5 pl-12 pr-20 text-base leading-6 text-transparent sm:py-4 sm:pr-40">
+            <div className="chat-input-placeholder block w-full whitespace-pre-wrap break-words py-1.5 pr-20 text-base leading-6 text-transparent sm:py-4 sm:pr-40" style={{ paddingLeft: '8rem' }}>
               {renderInputWithMentions(input)}
             </div>
           </div>
@@ -286,7 +284,7 @@ export default function ChatComposer({
               onInput={onTextareaInput}
               placeholder={placeholder}
               className="chat-input-placeholder block max-h-[40vh] min-h-[42px] w-full resize-none overflow-y-auto rounded-2xl bg-transparent py-1.5 pl-12 pr-20 text-base leading-6 text-foreground placeholder-muted-foreground/50 transition-all duration-200 focus:outline-none sm:max-h-[300px] sm:min-h-[52px] sm:py-4 sm:pr-40"
-              style={{ height: '42px' }}
+              style={{ height: '42px', paddingLeft: '8rem' }}
             />
 
             <button
@@ -304,6 +302,91 @@ export default function ChatComposer({
                 />
               </svg>
             </button>
+
+            {/* Control buttons - positioned at bottom-left */}
+            <div className="absolute bottom-2 left-12 flex items-center gap-1">
+              {/* Permission Mode Button */}
+              <button
+                type="button"
+                onClick={onModeSwitch}
+                className={`flex h-6 w-6 items-center justify-center rounded-lg border transition-all duration-200 ${
+                  permissionMode === 'default'
+                    ? 'border-border/60 bg-muted/50 text-muted-foreground hover:bg-muted'
+                    : permissionMode === 'acceptEdits'
+                      ? 'border-green-300/60 bg-green-50 text-green-700 hover:bg-green-100 dark:border-green-600/40 dark:bg-green-900/15 dark:text-green-300 dark:hover:bg-green-900/25'
+                      : permissionMode === 'bypassPermissions'
+                        ? 'border-orange-300/60 bg-orange-50 text-orange-700 hover:bg-orange-100 dark:border-orange-600/40 dark:bg-orange-900/15 dark:text-orange-300 dark:hover:bg-orange-900/25'
+                        : 'border-primary/20 bg-primary/5 text-primary hover:bg-primary/10'
+                }`}
+                title={t('input.clickToChangeMode')}
+              >
+                <div
+                  className={`h-2 w-2 rounded-full ${
+                    permissionMode === 'default'
+                      ? 'bg-muted-foreground'
+                      : permissionMode === 'acceptEdits'
+                        ? 'bg-green-500'
+                        : permissionMode === 'bypassPermissions'
+                          ? 'bg-orange-500'
+                          : 'bg-primary'
+                  }`}
+                />
+              </button>
+
+              {/* Thinking Mode Button */}
+              {provider === 'claude' && (
+                <div className="flex items-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const modes = ['default', 'extended', 'deep'];
+                      const currentIndex = modes.indexOf(thinkingMode);
+                      const nextMode = modes[(currentIndex + 1) % modes.length];
+                      setThinkingMode(nextMode);
+                    }}
+                    className={`flex h-6 w-6 items-center justify-center rounded-lg border transition-all duration-200 ${
+                      thinkingMode === 'default'
+                        ? 'border-border/60 bg-muted/50 text-muted-foreground hover:bg-muted'
+                        : thinkingMode === 'extended'
+                          ? 'border-blue-300/60 bg-blue-50 text-blue-700 hover:bg-blue-100 dark:border-blue-600/40 dark:bg-blue-900/15 dark:text-blue-300 dark:hover:bg-blue-900/25'
+                          : 'border-purple-300/60 bg-purple-50 text-purple-700 hover:bg-purple-100 dark:border-purple-600/40 dark:bg-purple-900/15 dark:text-purple-300 dark:hover:bg-purple-900/25'
+                    }`}
+                    title={`Thinking mode: ${thinkingMode}`}
+                  >
+                    <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              )}
+
+              {/* Commands Button */}
+              <button
+                type="button"
+                onClick={onToggleCommandMenu}
+                className="relative flex h-6 w-6 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground"
+                title={t('input.showAllCommands')}
+              >
+                <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+                  />
+                </svg>
+                {slashCommandsCount > 0 && (
+                  <span className="absolute -right-0.5 -top-0.5 flex h-3 w-3 items-center justify-center rounded-full bg-primary text-[8px] font-bold text-primary-foreground">
+                    {slashCommandsCount}
+                  </span>
+                )}
+              </button>
+            </div>
 
             <div className="absolute right-16 top-1/2 -translate-y-1/2 transform sm:right-16" style={{ display: 'none' }}>
               <MicButton onTranscript={onTranscript} className="h-10 w-10 sm:h-10 sm:w-10" />
@@ -342,7 +425,6 @@ export default function ChatComposer({
             provider={provider}
             thinkingMode={thinkingMode}
             setThinkingMode={setThinkingMode}
-            tokenBudget={tokenBudget}
             slashCommandsCount={slashCommandsCount}
             onToggleCommandMenu={onToggleCommandMenu}
             hasInput={hasInput}

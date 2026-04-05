@@ -2,12 +2,14 @@ import { useTranslation } from 'react-i18next';
 import SessionProviderLogo from '../../../llm-logo-provider/SessionProviderLogo';
 import type { AppTab, Project, ProjectSession } from '../../../../types/app';
 import { usePlugins } from '../../../../contexts/PluginsContext';
+import TokenUsagePie from '../../../chat/view/subcomponents/TokenUsagePie';
 
 type MainContentTitleProps = {
   activeTab: AppTab;
   selectedProject: Project;
   selectedSession: ProjectSession | null;
   shouldShowTasksTab: boolean;
+  tokenBudget: { used?: number; total?: number } | null;
 };
 
 function getTabTitle(activeTab: AppTab, shouldShowTasksTab: boolean, t: (key: string) => string, pluginDisplayName?: string) {
@@ -43,6 +45,7 @@ export default function MainContentTitle({
   selectedProject,
   selectedSession,
   shouldShowTasksTab,
+  tokenBudget,
 }: MainContentTitleProps) {
   const { t } = useTranslation();
   const { plugins } = usePlugins();
@@ -84,6 +87,15 @@ export default function MainContentTitle({
           </div>
         )}
       </div>
+
+      {activeTab === 'chat' && tokenBudget && (
+        <div className="flex-shrink-0">
+          <TokenUsagePie
+            used={tokenBudget?.used || 0}
+            total={tokenBudget?.total || parseInt(import.meta.env.VITE_CONTEXT_WINDOW) || 160000}
+          />
+        </div>
+      )}
     </div>
   );
 }

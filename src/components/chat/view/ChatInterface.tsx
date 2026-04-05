@@ -41,6 +41,7 @@ function ChatInterface({
   sendByCtrlEnter,
   externalMessageUpdate,
   onShowAllTasks,
+  onTokenBudgetChange,
 }: ChatInterfaceProps) {
   const { tasksEnabled, isTaskMasterInstalled } = useTasksSettings();
   const { t } = useTranslation('chat');
@@ -268,6 +269,10 @@ function ChatInterface({
     };
   }, [resetStreamingState]);
 
+  useEffect(() => {
+    onTokenBudgetChange?.(tokenBudget);
+  }, [tokenBudget, onTokenBudgetChange]);
+
   if (!selectedProject) {
     const selectedProviderLabel =
       provider === 'cursor'
@@ -353,7 +358,6 @@ function ChatInterface({
           onModeSwitch={cyclePermissionMode}
           thinkingMode={thinkingMode}
           setThinkingMode={setThinkingMode}
-          tokenBudget={tokenBudget}
           slashCommandsCount={slashCommandsCount}
           onToggleCommandMenu={handleToggleCommandMenu}
           hasInput={Boolean(input.trim())}
