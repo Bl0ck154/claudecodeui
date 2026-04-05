@@ -223,6 +223,11 @@ export default function ProviderSelectionEmptyState({
                   onChange={(e) => handleModelChange(e.target.value)}
                   tabIndex={-1}
                   className="cursor-pointer appearance-none rounded-lg border border-border/60 bg-muted/50 py-1.5 pl-3 pr-7 text-sm font-medium text-foreground transition-colors hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  style={{
+                    backgroundImage: 'none',
+                    WebkitAppearance: 'none',
+                    MozAppearance: 'none'
+                  }}
                 >
                   {modelConfig.OPTIONS.map(
                     ({ value, label }: { value: string; label: string }) => (

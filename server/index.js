@@ -552,13 +552,24 @@ app.put('/api/sessions/:sessionId/rename', authenticateToken, async (req, res) =
         if (!summary || typeof summary !== 'string' || summary.trim() === '') {
             return res.status(400).json({ error: 'Summary is required' });
         }
-        if (summary.trim().length > 500) {
+
+        // Filter out system XML tags like <task-notification>, <system-reminder>, etc.
+        let cleanSummary = summary.trim();
+        cleanSummary = cleanSummary.replace(/<task-notification>[\s\S]*?<\/task-notification>/g, '');
+        cleanSummary = cleanSummary.replace(/<system-reminder>[\s\S]*?<\/system-reminder>/g, '');
+        cleanSummary = cleanSummary.replace(/<command-name>[\s\S]*?<\/command-name>/g, '');
+        cleanSummary = cleanSummary.trim();
+
+        if (cleanSummary.length === 0) {
+            return res.status(400).json({ error: 'Summary cannot be empty after filtering' });
+        }
+        if (cleanSummary.length > 500) {
             return res.status(400).json({ error: 'Summary must not exceed 500 characters' });
         }
         if (!provider || !VALID_PROVIDERS.includes(provider)) {
             return res.status(400).json({ error: `Provider must be one of: ${VALID_PROVIDERS.join(', ')}` });
         }
-        sessionNamesDb.setName(safeSessionId, provider, summary.trim());
+        sessionNamesDb.setName(safeSessionId, provider, cleanSummary);
         res.json({ success: true });
     } catch (error) {
         console.error(`[API] Error renaming session ${req.params.sessionId}:`, error);
