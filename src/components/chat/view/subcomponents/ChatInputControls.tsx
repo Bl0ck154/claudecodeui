@@ -38,11 +38,11 @@ export default function ChatInputControls({
   const { t } = useTranslation('chat');
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+    <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
       <button
         type="button"
         onClick={onModeSwitch}
-        className={`rounded-lg border px-2.5 py-1 text-sm font-medium transition-all duration-200 sm:px-3 sm:py-1.5 ${
+        className={`rounded-lg border px-2 py-0.5 text-xs font-medium transition-all duration-200 sm:px-2.5 sm:py-1 ${
           permissionMode === 'default'
             ? 'border-border/60 bg-muted/50 text-muted-foreground hover:bg-muted'
             : permissionMode === 'acceptEdits'
@@ -53,9 +53,9 @@ export default function ChatInputControls({
         }`}
         title={t('input.clickToChangeMode')}
       >
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1">
           <div
-            className={`h-1.5 w-1.5 rounded-full ${
+            className={`h-1 w-1 rounded-full ${
               permissionMode === 'default'
                 ? 'bg-muted-foreground'
                 : permissionMode === 'acceptEdits'
@@ -83,10 +83,10 @@ export default function ChatInputControls({
       <button
         type="button"
         onClick={onToggleCommandMenu}
-        className="relative flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground sm:h-8 sm:w-8"
+        className="relative flex h-6 w-6 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground sm:h-7 sm:w-7"
         title={t('input.showAllCommands')}
       >
-        <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -96,7 +96,7 @@ export default function ChatInputControls({
         </svg>
         {slashCommandsCount > 0 && (
           <span
-            className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground sm:h-5 sm:w-5"
+            className="absolute -right-0.5 -top-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground sm:h-4 sm:w-4 sm:text-[10px]"
           >
             {slashCommandsCount}
           </span>
@@ -107,11 +107,11 @@ export default function ChatInputControls({
         <button
           type="button"
           onClick={onClearInput}
-          className="group flex h-7 w-7 items-center justify-center rounded-lg border border-border/50 bg-card shadow-sm transition-all duration-200 hover:bg-accent/60 sm:h-8 sm:w-8"
+          className="group flex h-6 w-6 items-center justify-center rounded-lg border border-border/50 bg-card shadow-sm transition-all duration-200 hover:bg-accent/60 sm:h-7 sm:w-7"
           title={t('input.clearInput', { defaultValue: 'Clear input' })}
         >
           <svg
-            className="h-3.5 w-3.5 text-muted-foreground transition-colors group-hover:text-foreground sm:h-4 sm:w-4"
+            className="h-3 w-3 text-muted-foreground transition-colors group-hover:text-foreground sm:h-3.5 sm:w-3.5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -124,10 +124,10 @@ export default function ChatInputControls({
       {isUserScrolledUp && hasMessages && (
         <button
           onClick={onScrollToBottom}
-          className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm transition-all duration-200 hover:scale-105 hover:bg-primary/90 sm:h-8 sm:w-8"
+          className="flex h-6 w-6 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm transition-all duration-200 hover:scale-105 hover:bg-primary/90 sm:h-7 sm:w-7"
           title={t('input.scrollToBottom', { defaultValue: 'Scroll to bottom' })}
         >
-          <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="h-3 w-3 sm:h-3.5 sm:w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
           </svg>
         </button>
