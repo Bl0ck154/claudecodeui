@@ -4,7 +4,7 @@ import { Button } from '../../../../shared/view/ui';
 import { cn } from '../../../../lib/utils';
 import type { Project, ProjectSession, SessionProvider } from '../../../../types/app';
 import type { MCPServerStatus, SessionWithProvider } from '../../types/types';
-import { getTaskIndicatorStatus } from '../../utils/utils';
+import { getTaskIndicatorStatus, createSessionViewModel } from '../../utils/utils';
 import TaskIndicator from './TaskIndicator';
 import SidebarProjectSessions from './SidebarProjectSessions';
 
@@ -100,6 +100,12 @@ export default function SidebarProjectItem({
   const sessionCountLabel = `${sessionCountDisplay} session${sessions.length === 1 ? '' : 's'}`;
   const taskStatus = getTaskIndicatorStatus(project, mcpServerStatus);
 
+  // Check if project has active sessions (not currently selected)
+  const hasActiveSessions = !isSelected && sessions.some((session) => {
+    const sessionView = createSessionViewModel(session, currentTime, t);
+    return sessionView.isActive;
+  });
+
   const toggleProject = () => onToggleProject(project.name);
   const toggleStarProject = () => onToggleStarProject(project.name);
 
@@ -117,7 +123,13 @@ export default function SidebarProjectItem({
 
   return (
     <div className={cn('md:space-y-1', isDeleting && 'opacity-50 pointer-events-none')}>
-      <div className="md:group group">
+      <div className="md:group group relative">
+        {hasActiveSessions && (
+          <div className="absolute left-0 top-1/2 -translate-x-1 -translate-y-1/2 transform z-10">
+            <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
+          </div>
+        )}
+
         <div className="md:hidden">
           <div
             className={cn(
@@ -126,6 +138,7 @@ export default function SidebarProjectItem({
               isStarred &&
                 !isSelected &&
                 'bg-yellow-50/50 dark:bg-yellow-900/5 border-yellow-200/30 dark:border-yellow-800/30',
+              hasActiveSessions && 'border-green-500/30 bg-green-50/5 dark:bg-green-900/5',
             )}
             onClick={toggleProject}
           >
@@ -173,7 +186,14 @@ export default function SidebarProjectItem({
                   ) : (
                     <>
                       <div className="flex min-w-0 flex-1 items-center justify-between">
-                        <h3 className="truncate text-sm font-medium text-foreground">{project.displayName}</h3>
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                          <h3 className="truncate text-sm font-medium text-foreground">{project.displayName}</h3>
+                          {hasActiveSessions && (
+                            <div className="flex-shrink-0">
+                              <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
+                            </div>
+                          )}
+                        </div>
                         {tasksEnabled && (
                           <TaskIndicator
                             status={taskStatus}
@@ -277,6 +297,7 @@ export default function SidebarProjectItem({
             isStarred &&
               !isSelected &&
               'bg-yellow-50/50 dark:bg-yellow-900/10 hover:bg-yellow-100/50 dark:hover:bg-yellow-900/20',
+            hasActiveSessions && 'border-l-2 border-green-500',
           )}
           onClick={selectAndToggleProject}
         >
@@ -311,8 +332,15 @@ export default function SidebarProjectItem({
                 </div>
               ) : (
                 <div>
-                  <div className="truncate text-sm font-semibold text-foreground" title={project.displayName}>
-                    {project.displayName}
+                  <div className="flex items-center gap-2">
+                    <div className="truncate text-sm font-semibold text-foreground" title={project.displayName}>
+                      {project.displayName}
+                    </div>
+                    {hasActiveSessions && (
+                      <div className="flex-shrink-0">
+                        <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
+                      </div>
+                    )}
                   </div>
                   <div className="text-xs text-muted-foreground">
                     {sessionCountDisplay}

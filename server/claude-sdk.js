@@ -26,6 +26,7 @@ import {
 } from './services/notification-orchestrator.js';
 import { claudeAdapter } from './providers/claude/adapter.js';
 import { createNormalizedMessage } from './providers/types.js';
+import { loadClaudeConfig, applyClaudeConfigToSDK } from './utils/claude-config-loader.js';
 
 const activeSessions = new Map();
 const pendingToolApprovals = new Map();
@@ -141,9 +142,10 @@ function matchesToolPermission(entry, toolName, input) {
 /**
  * Maps CLI options to SDK-compatible options format
  * @param {Object} options - CLI options
+ * @param {Object} claudeConfig - Claude CLI config from loadClaudeConfig()
  * @returns {Object} SDK-compatible options
  */
-function mapCliOptionsToSDK(options = {}) {
+function mapCliOptionsToSDK(options = {}, claudeConfig = {}) {
   const { sessionId, cwd, toolsSettings, permissionMode } = options;
 
   const sdkOptions = {};
@@ -192,9 +194,9 @@ function mapCliOptionsToSDK(options = {}) {
 
   sdkOptions.disallowedTools = settings.disallowedTools || [];
 
-  // Map model (default to sonnet)
-  // Valid models: sonnet, opus, haiku, opusplan, sonnet[1m]
-  sdkOptions.model = options.model || CLAUDE_MODELS.DEFAULT;
+  // Map model with priority: options.model > claudeConfig.model > default
+  // Valid models: sonnet, opus, haiku, opusplan, sonnet[1m], or custom models like kr/claude-sonnet-4.5
+  sdkOptions.model = options.model || claudeConfig.model || CLAUDE_MODELS.DEFAULT;
   // Model logged at query start below
 
   // Map system prompt configuration
@@ -211,6 +213,9 @@ function mapCliOptionsToSDK(options = {}) {
   if (sessionId) {
     sdkOptions.resume = sessionId;
   }
+
+  // Apply Claude CLI config (custom API URL, auth tokens)
+  applyClaudeConfigToSDK(sdkOptions, claudeConfig);
 
   return sdkOptions;
 }
@@ -481,8 +486,11 @@ async function queryClaudeSDK(command, options = {}, ws) {
   };
 
   try {
-    // Map CLI options to SDK format
-    const sdkOptions = mapCliOptionsToSDK(options);
+    // Load Claude CLI configuration (API keys, custom URLs, models)
+    const claudeConfig = await loadClaudeConfig();
+
+    // Map CLI options to SDK format with Claude config
+    const sdkOptions = mapCliOptionsToSDK(options, claudeConfig);
 
     // Load MCP configuration
     const mcpServers = await loadMcpConfig(options.cwd);

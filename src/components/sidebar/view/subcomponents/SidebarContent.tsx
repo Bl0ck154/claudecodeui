@@ -8,6 +8,7 @@ import type { ConversationSearchResults, SearchProgress } from '../../hooks/useS
 import SidebarFooter from './SidebarFooter';
 import SidebarHeader from './SidebarHeader';
 import SidebarProjectList, { type SidebarProjectListProps } from './SidebarProjectList';
+import SidebarConversationsList from './SidebarConversationsList';
 
 type SearchMode = 'projects' | 'conversations';
 
@@ -88,8 +89,12 @@ export default function SidebarContent({
   projectListProps,
   t,
 }: SidebarContentProps) {
+  // Show conversation search results when in conversations mode with search query >= 2 chars
   const showConversationSearch = searchMode === 'conversations' && searchFilter.trim().length >= 2;
   const hasPartialResults = conversationResults && conversationResults.results.length > 0;
+
+  // Show flat conversations list when in conversations mode without search
+  const showConversationsList = searchMode === 'conversations' && searchFilter.trim().length < 2;
 
   return (
     <div
@@ -208,6 +213,24 @@ export default function SidebarContent({
               ))}
             </div>
           ) : null
+        ) : showConversationsList ? (
+          <SidebarConversationsList
+            projects={projects}
+            selectedSession={projectListProps.selectedSession}
+            currentTime={projectListProps.currentTime}
+            editingSession={projectListProps.editingSession}
+            editingSessionName={projectListProps.editingSessionName}
+            getProjectSessions={projectListProps.getProjectSessions}
+            onEditingSessionNameChange={projectListProps.onEditingSessionNameChange}
+            onStartEditingSession={projectListProps.onStartEditingSession}
+            onCancelEditingSession={projectListProps.onCancelEditingSession}
+            onSaveEditingSession={projectListProps.onSaveEditingSession}
+            onProjectSelect={projectListProps.onProjectSelect}
+            onSessionSelect={projectListProps.onSessionSelect}
+            onDeleteSession={projectListProps.onDeleteSession}
+            searchFilter={searchFilter}
+            t={t}
+          />
         ) : (
           <SidebarProjectList {...projectListProps} />
         )}

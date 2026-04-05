@@ -68,8 +68,8 @@ export default function CodexMcpFormModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/50 p-4">
-      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg border border-border bg-background">
+    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
+      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg border border-border bg-background" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between border-b border-border p-4">
           <h3 className="text-lg font-medium text-foreground">
             {editingServer ? t('mcpForm.title.edit') : t('mcpForm.title.add')}

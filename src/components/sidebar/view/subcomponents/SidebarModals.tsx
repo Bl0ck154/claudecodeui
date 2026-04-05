@@ -100,8 +100,8 @@ export default function SidebarModals({
 
       {deleteConfirmation &&
         ReactDOM.createPortal(
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-            <div className="w-full max-w-md overflow-hidden rounded-xl border border-border bg-card shadow-2xl">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={onCancelDeleteProject}>
+            <div className="w-full max-w-md overflow-hidden rounded-xl border border-border bg-card shadow-2xl" onClick={(e) => e.stopPropagation()}>
               <div className="p-6">
                 <div className="flex items-start gap-4">
                   <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
@@ -154,8 +154,8 @@ export default function SidebarModals({
 
       {sessionDeleteConfirmation &&
         ReactDOM.createPortal(
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-            <div className="w-full max-w-md overflow-hidden rounded-xl border border-border bg-card shadow-2xl">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={onCancelDeleteSession}>
+            <div className="w-full max-w-md overflow-hidden rounded-xl border border-border bg-card shadow-2xl" onClick={(e) => e.stopPropagation()}>
               <div className="p-6">
                 <div className="flex items-start gap-4">
                   <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">

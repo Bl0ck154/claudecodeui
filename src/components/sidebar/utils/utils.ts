@@ -12,13 +12,13 @@ export const readProjectSortOrder = (): ProjectSortOrder => {
   try {
     const rawSettings = localStorage.getItem('claude-settings');
     if (!rawSettings) {
-      return 'name';
+      return 'date';
     }
 
     const settings = JSON.parse(rawSettings) as { projectSortOrder?: ProjectSortOrder };
     return settings.projectSortOrder === 'date' ? 'date' : 'name';
   } catch {
-    return 'name';
+    return 'date';
   }
 };
 
@@ -230,4 +230,17 @@ export const normalizeProjectForSettings = (project: Project): SettingsProject =
         ? project.path
         : fallbackPath,
   };
+};
+
+export const projectHasActiveSessions = (
+  project: Project,
+  additionalSessions: AdditionalSessionsByProject,
+  currentTime: Date,
+  t: TFunction,
+): boolean => {
+  const sessions = getAllSessions(project, additionalSessions);
+  return sessions.some((session) => {
+    const sessionView = createSessionViewModel(session, currentTime, t);
+    return sessionView.isActive;
+  });
 };

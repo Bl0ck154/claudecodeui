@@ -120,6 +120,10 @@
     "projectsScanned_many": "{{count}} проектов просканировано",
     "projectsScanned_other": "{{count}} проектов просканировано"
   },
+  "conversations": {
+    "noConversations": "Разговоров пока нет",
+    "startNewConversation": "Начните новый разговор в любом проекте"
+  },
   "deleteConfirmation": {
     "deleteProject": "Удалить проект",
     "deleteSession": "Удалить сеанс",

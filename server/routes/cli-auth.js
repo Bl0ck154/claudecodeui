@@ -3,6 +3,7 @@ import { spawn } from 'child_process';
 import fs from 'fs/promises';
 import path from 'path';
 import os from 'os';
+import { loadClaudeConfig } from '../utils/claude-config-loader.js';
 
 const router = express.Router();
 
@@ -96,28 +97,13 @@ router.get('/gemini/status', async (req, res) => {
   }
 });
 
-async function loadClaudeSettingsEnv() {
-  try {
-    const settingsPath = path.join(os.homedir(), '.claude', 'settings.json');
-    const content = await fs.readFile(settingsPath, 'utf8');
-    const settings = JSON.parse(content);
-
-    if (settings?.env && typeof settings.env === 'object') {
-      return settings.env;
-    }
-  } catch (error) {
-    // Ignore missing or malformed settings and fall back to other auth sources.
-  }
-
-  return {};
-}
-
 /**
- * Checks Claude authentication credentials using two methods with priority order:
+ * Checks Claude authentication credentials using priority order:
  *
  * Priority 1: ANTHROPIC_API_KEY environment variable
- * Priority 1b: ~/.claude/settings.json env values
- * Priority 2: ~/.claude/.credentials.json OAuth tokens
+ * Priority 2: ~/.claude/settings.json env values
+ * Priority 3: ~/.claude/config.json env values
+ * Priority 4: ~/.claude/.credentials.json OAuth tokens
  *
  * The Claude Agent SDK prioritizes environment variables over authenticated subscriptions.
  * This matching behavior ensures consistency with how the SDK authenticates.
@@ -134,10 +120,11 @@ async function loadClaudeSettingsEnv() {
  *   - method: 'api_key' for env var, 'credentials_file' for OAuth tokens
  */
 async function checkClaudeCredentials() {
-  // Priority 1: Check for ANTHROPIC_API_KEY environment variable
-  // The SDK checks this first and uses it if present, even if OAuth tokens exist.
-  // When set, API calls are charged via pay-as-you-go rates instead of subscription.
-  if (process.env.ANTHROPIC_API_KEY && process.env.ANTHROPIC_API_KEY.trim()) {
+  // Use the centralized config loader
+  const config = await loadClaudeConfig();
+
+  // Priority 1-3: Check for API key or auth token from config loader
+  if (config.apiKey) {
     return {
       authenticated: true,
       email: 'API Key Auth',
@@ -145,28 +132,15 @@ async function checkClaudeCredentials() {
     };
   }
 
-  // Priority 1b: Check ~/.claude/settings.json env values.
-  // Claude Code can read proxy/auth values from settings.json even when the
-  // CloudCLI server process itself was not started with those env vars exported.
-  const settingsEnv = await loadClaudeSettingsEnv();
-
-  if (typeof settingsEnv.ANTHROPIC_API_KEY === 'string' && settingsEnv.ANTHROPIC_API_KEY.trim()) {
+  if (config.authToken) {
     return {
       authenticated: true,
-      email: 'API Key Auth',
+      email: 'Auth Token (Custom API)',
       method: 'api_key'
     };
   }
 
-  if (typeof settingsEnv.ANTHROPIC_AUTH_TOKEN === 'string' && settingsEnv.ANTHROPIC_AUTH_TOKEN.trim()) {
-    return {
-      authenticated: true,
-      email: 'Configured via settings.json',
-      method: 'api_key'
-    };
-  }
-
-  // Priority 2: Check ~/.claude/.credentials.json for OAuth tokens
+  // Priority 4: Check ~/.claude/.credentials.json for OAuth tokens
   // This is the standard authentication method used by Claude CLI after running
   // 'claude /login' or 'claude setup-token' commands.
   try {

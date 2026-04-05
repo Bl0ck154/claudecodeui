@@ -49,6 +49,11 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      fontFamily: {
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        serif: ["var(--font-serif)", "Georgia", "serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -57,6 +62,11 @@ export default {
       spacing: {
         'safe-area-inset-bottom': 'env(safe-area-inset-bottom)',
         'mobile-nav': 'var(--mobile-nav-total)',
+      },
+      boxShadow: {
+        'claude-sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+        'claude-md': '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+        'claude-lg': '0 10px 15px -3px rgb(0 0 0 / 0.1)',
       },
     },
   },

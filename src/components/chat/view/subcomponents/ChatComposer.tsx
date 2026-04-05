@@ -326,13 +326,9 @@ export default function ChatComposer({
             </div>
 
             <button
-              type="submit"
-              disabled={!input.trim() || isLoading}
-              onMouseDown={(event) => {
-                event.preventDefault();
-                onSubmit(event);
-              }}
-              onTouchStart={(event) => {
+              type="button"
+              disabled={!input.trim()}
+              onClick={(event) => {
                 event.preventDefault();
                 onSubmit(event);
               }}

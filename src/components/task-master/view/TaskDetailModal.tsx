@@ -146,12 +146,13 @@ export default function TaskDetailModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 md:p-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 md:p-4" onClick={onClose}>
       <div
         className={cn(
           'w-full md:max-w-4xl h-full md:h-[90vh] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 md:rounded-lg shadow-xl flex flex-col',
           className,
         )}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700 md:p-6">
           <div className="flex min-w-0 flex-1 items-center gap-3">

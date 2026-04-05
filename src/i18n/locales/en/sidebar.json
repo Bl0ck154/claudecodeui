@@ -116,6 +116,10 @@
     "projectsScanned_one": "{{count}} project scanned",
     "projectsScanned_other": "{{count}} projects scanned"
   },
+  "conversations": {
+    "noConversations": "No conversations yet",
+    "startNewConversation": "Start a new conversation in any project"
+  },
   "deleteConfirmation": {
     "deleteProject": "Delete Project",
     "deleteSession": "Delete Session",
