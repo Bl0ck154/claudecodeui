@@ -23,6 +23,7 @@ interface OneLineDisplayProps {
   resultId?: string;
   toolResult?: any;
   toolId?: string;
+  isExecuting?: boolean;
 }
 
 /**
@@ -47,7 +48,8 @@ export const OneLineDisplay: React.FC<OneLineDisplayProps> = ({
     icon: 'text-gray-500 dark:text-gray-400'
   },
   toolResult,
-  toolId
+  toolId,
+  isExecuting = false
 }) => {
   const [copied, setCopied] = useState(false);
   const isTerminal = style === 'terminal';
@@ -90,12 +92,16 @@ export const OneLineDisplay: React.FC<OneLineDisplayProps> = ({
       <div className="group my-1">
         <div className="flex items-start gap-2">
           <div className="flex flex-shrink-0 items-center gap-1.5 pt-0.5">
-            <svg className="h-3 w-3 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
+            {isExecuting ? (
+              <div className="h-3 w-3 animate-spin rounded-full border-2 border-green-500 border-t-transparent dark:border-green-400" />
+            ) : (
+              <svg className="h-3 w-3 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            )}
           </div>
           <div className="flex min-w-0 flex-1 items-start gap-2">
-            <div className="min-w-0 flex-1 rounded bg-gray-900 px-2.5 py-1 dark:bg-black">
+            <div className={`min-w-0 flex-1 rounded bg-gray-900 px-2.5 py-1 dark:bg-black ${isExecuting ? 'ring-2 ring-green-500/50' : ''}`}>
               <code className={`font-mono text-xs text-green-400 ${wrapText ? 'whitespace-pre-wrap break-all' : 'block truncate'}`}>
                 <span className="select-none text-green-600 dark:text-green-500">$ </span>{value}
               </code>
@@ -162,7 +168,10 @@ export const OneLineDisplay: React.FC<OneLineDisplayProps> = ({
 
   // Default one-line style
   return (
-    <div className={`group flex items-center gap-1.5 ${colorScheme.background || ''} border-l-2 ${colorScheme.border} my-0.5 py-0.5 pl-3`}>
+    <div className={`group flex items-center gap-1.5 ${colorScheme.background || ''} border-l-2 ${colorScheme.border} my-0.5 py-0.5 pl-3 ${isExecuting ? 'bg-blue-50/50 dark:bg-blue-950/10' : ''}`}>
+      {isExecuting && (
+        <span className="h-1.5 w-1.5 flex-shrink-0 animate-pulse rounded-full bg-blue-500 dark:bg-blue-400" />
+      )}
       {icon && icon !== 'terminal' && (
         <span className={`${colorScheme.icon} flex-shrink-0 text-xs`}>{icon}</span>
       )}

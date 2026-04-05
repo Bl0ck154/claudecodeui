@@ -13,6 +13,7 @@ interface CollapsibleDisplayProps {
   rawContent?: string;
   className?: string;
   toolCategory?: string;
+  isExecuting?: boolean;
 }
 
 const borderColorMap: Record<string, string> = {
@@ -37,19 +38,21 @@ export const CollapsibleDisplay: React.FC<CollapsibleDisplayProps> = ({
   showRawParameters = false,
   rawContent,
   className = '',
-  toolCategory
+  toolCategory,
+  isExecuting = false
 }) => {
   // Fall back to default styling for unknown/new categories so className never includes "undefined".
   const borderColor = borderColorMap[toolCategory || 'default'] || borderColorMap.default;
 
   return (
-    <div className={`border-l-2 ${borderColor} my-1 py-0.5 pl-3 ${className}`}>
+    <div className={`border-l-2 ${borderColor} my-1 py-0.5 pl-3 ${className} ${isExecuting ? 'bg-blue-50/30 dark:bg-blue-950/10' : ''}`}>
       <CollapsibleSection
         title={title}
         toolName={toolName}
         open={defaultOpen}
         action={action}
         onTitleClick={onTitleClick}
+        isExecuting={isExecuting}
       >
         {children}
 

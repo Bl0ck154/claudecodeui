@@ -19,14 +19,10 @@ export default function AssistantThinkingIndicator({ selectedProvider }: Assista
           </div>
         </div>
         <div className="w-full pl-3 text-sm text-gray-500 dark:text-gray-400 sm:pl-0">
-          <div className="flex items-center space-x-1">
-            <div className="animate-pulse">.</div>
-            <div className="animate-pulse" style={{ animationDelay: '0.2s' }}>
-              .
-            </div>
-            <div className="animate-pulse" style={{ animationDelay: '0.4s' }}>
-              .
-            </div>
+          <div className="flex items-center space-x-0.5">
+            <span className="inline-block animate-bounce" style={{ animationDuration: '1.4s', animationDelay: '0s' }}>.</span>
+            <span className="inline-block animate-bounce" style={{ animationDuration: '1.4s', animationDelay: '0.2s' }}>.</span>
+            <span className="inline-block animate-bounce" style={{ animationDuration: '1.4s', animationDelay: '0.4s' }}>.</span>
             <span className="ml-2">Thinking...</span>
           </div>
         </div>

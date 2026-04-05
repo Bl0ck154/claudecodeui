@@ -8,6 +8,7 @@ interface CollapsibleSectionProps {
   onTitleClick?: () => void;
   children: React.ReactNode;
   className?: string;
+  isExecuting?: boolean;
 }
 
 /**
@@ -20,11 +21,15 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   action,
   onTitleClick,
   children,
-  className = ''
+  className = '',
+  isExecuting = false
 }) => {
   return (
     <details className={`group/details relative ${className}`} open={open}>
       <summary className="flex cursor-pointer select-none items-center gap-1.5 py-0.5 text-xs group-open/details:sticky group-open/details:top-0 group-open/details:z-10 group-open/details:-mx-1 group-open/details:bg-background group-open/details:px-1">
+        {isExecuting && (
+          <span className="h-1.5 w-1.5 flex-shrink-0 animate-pulse rounded-full bg-blue-500 dark:bg-blue-400" />
+        )}
         <svg
           className="h-3 w-3 flex-shrink-0 text-gray-400 transition-transform duration-150 group-open/details:rotate-90 dark:text-gray-500"
           fill="none"
@@ -34,7 +39,7 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
         {toolName && (
-          <span className="flex-shrink-0 font-medium text-gray-500 dark:text-gray-400">{toolName}</span>
+          <span className={`flex-shrink-0 font-medium ${isExecuting ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>{toolName}</span>
         )}
         {toolName && (
           <span className="flex-shrink-0 text-[10px] text-gray-300 dark:text-gray-600">/</span>
