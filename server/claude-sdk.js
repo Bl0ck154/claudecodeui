@@ -12,6 +12,14 @@
  * - WebSocket message streaming
  */
 
+// Ensure node is in PATH for SDK subprocess spawning
+// This fixes "spawn node ENOENT" errors when SDK tries to spawn child processes
+const nodePath = process.execPath;
+const nodeDir = nodePath.substring(0, nodePath.lastIndexOf(require('path').sep));
+if (!process.env.PATH.includes(nodeDir)) {
+  process.env.PATH = `${nodeDir}${require('path').delimiter}${process.env.PATH}`;
+}
+
 import { query } from '@anthropic-ai/claude-agent-sdk';
 import crypto from 'crypto';
 import { promises as fs } from 'fs';
