@@ -187,22 +187,6 @@ export default function ChatComposer({
           handlePermissionDecision={handlePermissionDecision}
           handleGrantToolPermission={handleGrantToolPermission}
         />
-
-        {!hasQuestionPanel && <ChatInputControls
-          permissionMode={permissionMode}
-          onModeSwitch={onModeSwitch}
-          provider={provider}
-          thinkingMode={thinkingMode}
-          setThinkingMode={setThinkingMode}
-          tokenBudget={tokenBudget}
-          slashCommandsCount={slashCommandsCount}
-          onToggleCommandMenu={onToggleCommandMenu}
-          hasInput={hasInput}
-          onClearInput={onClearInput}
-          isUserScrolledUp={isUserScrolledUp}
-          hasMessages={hasMessages}
-          onScrollToBottom={onScrollToBottom}
-        />}
       </div>
 
       {!hasQuestionPanel && <form onSubmit={onSubmit as (event: FormEvent<HTMLFormElement>) => void} className="relative mx-auto max-w-4xl">
@@ -349,6 +333,26 @@ export default function ChatComposer({
           </div>
         </div>
       </form>}
+
+      {!hasQuestionPanel && (
+        <div className="mx-auto mt-2 max-w-4xl">
+          <ChatInputControls
+            permissionMode={permissionMode}
+            onModeSwitch={onModeSwitch}
+            provider={provider}
+            thinkingMode={thinkingMode}
+            setThinkingMode={setThinkingMode}
+            tokenBudget={tokenBudget}
+            slashCommandsCount={slashCommandsCount}
+            onToggleCommandMenu={onToggleCommandMenu}
+            hasInput={hasInput}
+            onClearInput={onClearInput}
+            isUserScrolledUp={isUserScrolledUp}
+            hasMessages={hasMessages}
+            onScrollToBottom={onScrollToBottom}
+          />
+        </div>
+      )}
     </div>
   );
 }
