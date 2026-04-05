@@ -32,24 +32,20 @@ export function normalizedToChatMessages(messages: NormalizedMessage[]): ChatMes
         if (!content.trim()) continue;
 
         if (msg.role === 'user') {
-          // Parse task notifications
-          const taskNotifRegex = /<task-notification>\s*<task-id>[^<]*<\/task-id>\s*<output-file>[^<]*<\/output-file>\s*<status>([^<]*)<\/status>\s*<summary>([^<]*)<\/summary>\s*<\/task-notification>/g;
-          const taskNotifMatch = taskNotifRegex.exec(content);
-          if (taskNotifMatch) {
-            converted.push({
-              type: 'assistant',
-              content: taskNotifMatch[2]?.trim() || 'Background task finished',
-              timestamp: msg.timestamp,
-              isTaskNotification: true,
-              taskStatus: taskNotifMatch[1]?.trim() || 'completed',
-            });
-          } else {
-            converted.push({
-              type: 'user',
-              content: unescapeWithMathProtection(decodeHtmlEntities(content)),
-              timestamp: msg.timestamp,
-            });
+          // Filter out task notifications and system messages - don't show them in chat
+          const taskNotifRegex = /<task-notification>[\s\S]*?<\/task-notification>/;
+          const systemReminderRegex = /<system-reminder>[\s\S]*?<\/system-reminder>/;
+
+          // Skip messages that are purely system notifications
+          if (taskNotifRegex.test(content) || systemReminderRegex.test(content)) {
+            continue;
           }
+
+          converted.push({
+            type: 'user',
+            content: unescapeWithMathProtection(decodeHtmlEntities(content)),
+            timestamp: msg.timestamp,
+          });
         } else {
           let text = decodeHtmlEntities(content);
           text = unescapeWithMathProtection(text);
