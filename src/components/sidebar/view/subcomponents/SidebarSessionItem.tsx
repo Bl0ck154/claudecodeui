@@ -106,15 +106,15 @@ export default function SidebarSessionItem({
           aria-label={`Select conversation: ${sessionView.sessionName}`}
           aria-current={isSelected ? 'page' : undefined}
         >
-          <div className="flex items-start gap-2 pr-8">
+          <div className="flex items-start gap-2">
             <SessionProviderLogo provider={session.__provider} className="w-4 h-4 flex-shrink-0 mt-0.5" />
             <div className="text-sm font-normal truncate flex-1 leading-tight text-gray-900 dark:text-gray-100">
               {sessionView.sessionName}
             </div>
-            {sessionView.isActive && (
-              <span className="flex-shrink-0 h-1.5 w-1.5 rounded-full bg-green-500 mt-1.5" aria-label="Active conversation" />
-            )}
           </div>
+          {sessionView.isActive && (
+            <span className="absolute right-2 top-1/2 -translate-y-1/2 flex-shrink-0 h-1.5 w-1.5 rounded-full bg-green-500" aria-label="Active conversation" />
+          )}
           <div className="text-xs font-normal mt-1 ml-6 text-gray-500 dark:text-gray-400">
             {formatTimeAgo(sessionView.sessionTime, currentTime, t)}
             {sessionView.messageCount > 0 && (

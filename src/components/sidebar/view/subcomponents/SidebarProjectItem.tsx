@@ -302,7 +302,7 @@ export default function SidebarProjectItem({
           )}
           onClick={selectAndToggleProject}
         >
-          <div className="flex min-w-0 flex-1 items-center gap-2.5">
+          <div className="flex min-w-0 flex-1 items-center gap-2.5 relative">
             <div className={cn(
               "flex-shrink-0 w-7 h-7 rounded-md flex items-center justify-center transition-colors",
               isExpanded ? "bg-gray-200 dark:bg-gray-700" : "bg-gray-100 dark:bg-gray-800"
@@ -313,7 +313,7 @@ export default function SidebarProjectItem({
                 <Folder className="h-3.5 w-3.5 text-gray-500 dark:text-gray-500" />
               )}
             </div>
-            <div className="min-w-0 flex-1 text-left">
+            <div className="min-w-0 flex-1 text-left pr-6">
               {isEditing ? (
                 <div className="space-y-1">
                   <input
@@ -338,15 +338,8 @@ export default function SidebarProjectItem({
                 </div>
               ) : (
                 <div>
-                  <div className="flex items-center gap-1.5">
-                    <div className="truncate text-[13px] font-medium text-gray-900 dark:text-gray-100 max-w-[180px]" title={project.displayName}>
-                      {project.displayName}
-                    </div>
-                    {hasActiveSessions && (
-                      <div className="flex-shrink-0">
-                        <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
-                      </div>
-                    )}
+                  <div className="truncate text-[13px] font-medium text-gray-900 dark:text-gray-100" title={project.displayName}>
+                    {project.displayName}
                   </div>
                   <div className="text-[11px] text-gray-500 dark:text-gray-500 mt-0.5 font-normal">
                     {sessionCountDisplay} {sessions.length === 1 ? 'session' : 'sessions'}
@@ -354,6 +347,11 @@ export default function SidebarProjectItem({
                 </div>
               )}
             </div>
+            {hasActiveSessions && !isEditing && (
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 flex-shrink-0">
+                <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
+              </div>
+            )}
           </div>
 
           <div className="flex flex-shrink-0 items-center gap-0.5">
