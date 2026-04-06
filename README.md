@@ -52,6 +52,56 @@
 
 </div>
 
+---
+
+## ✨ Enhanced Fork Features
+
+This fork includes significant UI/UX improvements over the original CloudCLI UI:
+
+### 🎨 Modern Sidebar Design
+- **Neutral Gray Color Scheme** - Replaced blue accents with professional gray tones for a cleaner, more focused interface
+- **Provider Icons** - Visual indicators for Claude, Gemini, Cursor, and Codex sessions at a glance
+- **Optimized Text Display** - Maximized visible text in project and session names with reduced truncation
+- **Smart Action Icons** - Hover controls positioned at the bottom of items for better space utilization
+- **Active Session Indicators** - Green dots inline with session names for clear visual feedback
+- **Clickable Project Paths** - Copy full project paths to clipboard with a single click and visual confirmation
+- **Selectable Text** - All project and session names can be selected for manual copying
+- **Thin Scrollbars** - Subtle, unobtrusive scrollbar styling throughout the interface
+
+<div align="center">
+  <img src="public/screenshots/improved-sidebar.png" alt="Improved Sidebar" width="300">
+  <br>
+  <em>Enhanced sidebar with provider icons and optimized layout</em>
+</div>
+
+### 💬 Improved Chat Experience
+- **Consistent Message Alignment** - All assistant messages maintain uniform width regardless of avatar visibility
+- **Reserved Avatar Space** - Avatar area always reserved, preventing layout shifts between grouped messages
+- **Balanced User Messages** - User prompts positioned with optimal padding (21% left, 4% right) for better visual hierarchy
+- **Floating Input Field** - Chat composer floats cleanly over messages without invisible padding barriers
+- **Filtered System Messages** - "Compacting conversation" and other system artifacts hidden from chat view
+- **Reduced Message Spacing** - Minimized padding between messages and input field for more efficient use of space
+- **Token Budget Display** - Context window usage visible for all providers (Claude, Codex, etc.), not just Claude sessions
+
+<div align="center">
+  <img src="public/screenshots/improved-chat-layout.png" alt="Improved Chat Layout" width="600">
+  <br>
+  <em>Refined chat interface with consistent alignment and better spacing</em>
+</div>
+
+### 🔧 Technical Improvements
+- **Cross-Provider Token Tracking** - Token usage API now works with all providers via query parameters
+- **Enhanced Message Filtering** - Smart filtering of short artifact messages (single special characters)
+- **Improved Session State Management** - Better handling of token budget across session switches
+- **GitHub Integration** - Repository link replaces Discord in footer for direct access to source
+
+### 📱 Responsive Enhancements
+- Both mobile and desktop views benefit from the improved layout
+- Touch-friendly action buttons positioned for easier access
+- Consistent experience across all screen sizes
+
+---
+
 ## Features
 
 - **Responsive Design** - Works seamlessly across desktop, tablet, and mobile so you can also use Agents from mobile 
