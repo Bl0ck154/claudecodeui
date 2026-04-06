@@ -264,7 +264,28 @@ You have access to the files and code in this directory. When the user asks abou
               if (deltaTimer) {
                 clearTimeout(deltaTimer);
               }
-              deltaTimer = setTimeout(flushDeltas, 50);
+              deltaTimer = setTimeout(() => {
+                // Filter out system tags before sending
+                let filteredText = deltaBuffer;
+                filteredText = filteredText.replace(/<attempt_completion>[\s\S]*?<\/attempt_completion>/g, '');
+                filteredText = filteredText.replace(/<system-reminder>[\s\S]*?<\/system-reminder>/g, '');
+                filteredText = filteredText.replace(/<task-notification>[\s\S]*?<\/task-notification>/g, '');
+                filteredText = filteredText.replace(/<command-name>[\s\S]*?<\/command-name>/g, '');
+                filteredText = filteredText.replace(/<list_directory>[\s\S]*?<\/list_directory>/g, '');
+                filteredText = filteredText.replace(/<read_file>[\s\S]*?<\/read_file>/g, '');
+                filteredText = filteredText.replace(/<write_file>[\s\S]*?<\/write_file>/g, '');
+
+                if (filteredText) {
+                  writer.send({
+                    kind: 'stream_delta',
+                    content: filteredText,
+                    sessionId,
+                    timestamp: new Date().toISOString()
+                  });
+                }
+                deltaBuffer = '';
+                deltaTimer = null;
+              }, 50);
             }
 
             if (event.type === 'message_stop') {
