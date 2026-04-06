@@ -57,6 +57,25 @@ export default function MainContentTitle({
   const showSessionIcon = activeTab === 'chat' && Boolean(selectedSession);
   const showChatNewSession = activeTab === 'chat' && !selectedSession;
 
+  const handleProjectPathClick = async () => {
+    const fullPath = selectedProject.fullPath || selectedProject.name;
+
+    // Try to copy to clipboard
+    try {
+      await navigator.clipboard.writeText(fullPath);
+    } catch (err) {
+      console.error('Failed to copy path:', err);
+    }
+
+    // Try to open in file explorer
+    try {
+      // Use file:// protocol to open in explorer
+      window.open(`file:///${fullPath}`, '_blank');
+    } catch (err) {
+      console.error('Failed to open in explorer:', err);
+    }
+  };
+
   return (
     <div className="scrollbar-hide flex min-w-0 flex-1 items-center gap-2 overflow-x-auto">
       {showSessionIcon && (
@@ -71,19 +90,37 @@ export default function MainContentTitle({
             <h2 className="scrollbar-hide overflow-x-auto whitespace-nowrap text-sm font-semibold leading-tight text-foreground">
               {getSessionTitle(selectedSession)}
             </h2>
-            <div className="truncate text-[11px] leading-tight text-muted-foreground">{selectedProject.displayName}</div>
+            <div
+              className="truncate text-[11px] leading-tight text-muted-foreground cursor-pointer hover:text-foreground transition-colors select-text"
+              onClick={handleProjectPathClick}
+              title={`Click to copy: ${selectedProject.fullPath || selectedProject.name}`}
+            >
+              {selectedProject.displayName}
+            </div>
           </div>
         ) : showChatNewSession ? (
           <div className="min-w-0">
             <h2 className="text-base font-semibold leading-tight text-foreground">{t('mainContent.newSession')}</h2>
-            <div className="truncate text-xs leading-tight text-muted-foreground">{selectedProject.displayName}</div>
+            <div
+              className="truncate text-xs leading-tight text-muted-foreground cursor-pointer hover:text-foreground transition-colors select-text"
+              onClick={handleProjectPathClick}
+              title={`Click to copy: ${selectedProject.fullPath || selectedProject.name}`}
+            >
+              {selectedProject.displayName}
+            </div>
           </div>
         ) : (
           <div className="min-w-0">
             <h2 className="text-sm font-semibold leading-tight text-foreground">
               {getTabTitle(activeTab, shouldShowTasksTab, t, pluginDisplayName)}
             </h2>
-            <div className="truncate text-[11px] leading-tight text-muted-foreground">{selectedProject.displayName}</div>
+            <div
+              className="truncate text-[11px] leading-tight text-muted-foreground cursor-pointer hover:text-foreground transition-colors select-text"
+              onClick={handleProjectPathClick}
+              title={`Click to copy: ${selectedProject.fullPath || selectedProject.name}`}
+            >
+              {selectedProject.displayName}
+            </div>
           </div>
         )}
       </div>
