@@ -741,6 +741,18 @@
     hyphens: auto;
   }
 
+  /* Chat message spacing improvements for claude.ai style */
+  .chat-message.user,
+  .chat-message.assistant,
+  .chat-message.error,
+  .chat-message.tool {
+    margin-bottom: 1.5rem;
+  }
+
+  .chat-message.grouped {
+    margin-top: -0.75rem;
+  }
+
   /* Force wrap long URLs and code */
   .chat-message pre,
   .chat-message code {

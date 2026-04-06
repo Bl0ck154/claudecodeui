@@ -179,7 +179,7 @@ export default function ChatComposer({
         </div>
       )}
 
-      <div className="mx-auto mb-3 max-w-4xl">
+      <div className="mx-auto mb-3 max-w-3xl px-4">
         <PermissionRequestsBanner
           pendingPermissionRequests={pendingPermissionRequests}
           handlePermissionDecision={handlePermissionDecision}
@@ -187,7 +187,7 @@ export default function ChatComposer({
         />
       </div>
 
-      {!hasQuestionPanel && <form onSubmit={onSubmit as (event: FormEvent<HTMLFormElement>) => void} className="relative mx-auto max-w-4xl">
+      {!hasQuestionPanel && <form onSubmit={onSubmit as (event: FormEvent<HTMLFormElement>) => void} className="relative mx-auto max-w-3xl px-4">
         {isDragActive && (
           <div className="absolute inset-0 z-50 flex items-center justify-center rounded-2xl border-2 border-dashed border-primary/50 bg-primary/15">
             <div className="rounded-xl border border-border/30 bg-card p-4 shadow-lg">
@@ -259,13 +259,13 @@ export default function ChatComposer({
 
         <div
           {...getRootProps()}
-          className={`relative overflow-hidden rounded-2xl border border-border/50 bg-card/80 shadow-sm backdrop-blur-sm transition-all duration-200 focus-within:border-primary/30 focus-within:shadow-md focus-within:ring-1 focus-within:ring-primary/15 ${
+          className={`relative overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all duration-200 focus-within:border-primary/50 focus-within:shadow-md focus-within:ring-2 focus-within:ring-primary/10 ${
             isTextareaExpanded ? 'chat-input-expanded' : ''
           }`}
         >
           <input {...getInputProps()} />
-          <div ref={inputHighlightRef} aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
-            <div className="chat-input-placeholder block w-full whitespace-pre-wrap break-words py-1.5 pr-20 text-base leading-6 text-transparent sm:py-4 sm:pr-40" style={{ paddingLeft: '8rem' }}>
+          <div ref={inputHighlightRef} aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl">
+            <div className="chat-input-placeholder block w-full whitespace-pre-wrap break-words py-3 pr-14 text-base leading-6 text-transparent sm:py-3 sm:pr-14" style={{ paddingLeft: '3.5rem' }}>
               {renderInputWithMentions(input)}
             </div>
           </div>
@@ -283,17 +283,17 @@ export default function ChatComposer({
               onBlur={() => onInputFocusChange?.(false)}
               onInput={onTextareaInput}
               placeholder={placeholder}
-              className="chat-input-placeholder block max-h-[40vh] min-h-[42px] w-full resize-none overflow-y-auto rounded-2xl bg-transparent py-1.5 pl-12 pr-20 text-base leading-6 text-foreground placeholder-muted-foreground/50 transition-all duration-200 focus:outline-none sm:max-h-[300px] sm:min-h-[52px] sm:py-4 sm:pr-40"
-              style={{ height: '42px', paddingLeft: '8rem' }}
+              className="chat-input-placeholder block max-h-[40vh] min-h-[48px] w-full resize-none overflow-y-auto rounded-xl bg-transparent py-3 pl-14 pr-14 text-base leading-6 text-foreground placeholder-muted-foreground/60 transition-all duration-200 focus:outline-none sm:max-h-[300px] sm:min-h-[48px] sm:py-3 sm:pr-14"
+              style={{ height: '48px', paddingLeft: '3.5rem' }}
             />
 
             <button
               type="button"
               onClick={openImagePicker}
-              className="absolute left-2 top-1/2 -translate-y-1/2 transform rounded-xl p-2 transition-colors hover:bg-accent/60"
+              className="absolute bottom-2 left-2 rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               title={t('input.attachImages')}
             >
-              <svg className="h-5 w-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -304,75 +304,70 @@ export default function ChatComposer({
             </button>
 
             {/* Control buttons - positioned at bottom-left */}
-            <div className="absolute bottom-2 left-12 flex items-center gap-1">
+            <div className="absolute bottom-2 left-14 flex items-center gap-1">
               {/* Permission Mode Button */}
               <button
                 type="button"
                 onClick={onModeSwitch}
-                className={`flex h-6 w-6 items-center justify-center rounded-lg border transition-all duration-200 ${
+                className={`rounded-lg p-2 transition-all duration-200 ${
                   permissionMode === 'default'
-                    ? 'border-border/60 bg-muted/50 text-muted-foreground hover:bg-muted'
+                    ? 'text-muted-foreground hover:bg-muted hover:text-foreground'
                     : permissionMode === 'acceptEdits'
-                      ? 'border-green-300/60 bg-green-50 text-green-700 hover:bg-green-100 dark:border-green-600/40 dark:bg-green-900/15 dark:text-green-300 dark:hover:bg-green-900/25'
+                      ? 'bg-green-100 text-green-600 hover:bg-green-200 dark:bg-green-900/25 dark:text-green-400 dark:hover:bg-green-900/40'
                       : permissionMode === 'bypassPermissions'
-                        ? 'border-orange-300/60 bg-orange-50 text-orange-700 hover:bg-orange-100 dark:border-orange-600/40 dark:bg-orange-900/15 dark:text-orange-300 dark:hover:bg-orange-900/25'
-                        : 'border-primary/20 bg-primary/5 text-primary hover:bg-primary/10'
+                        ? 'bg-orange-100 text-orange-600 hover:bg-orange-200 dark:bg-orange-900/25 dark:text-orange-400 dark:hover:bg-orange-900/40'
+                        : 'bg-primary/10 text-primary hover:bg-primary/20'
                 }`}
                 title={t('input.clickToChangeMode')}
               >
-                <div
-                  className={`h-2 w-2 rounded-full ${
-                    permissionMode === 'default'
-                      ? 'bg-muted-foreground'
-                      : permissionMode === 'acceptEdits'
-                        ? 'bg-green-500'
-                        : permissionMode === 'bypassPermissions'
-                          ? 'bg-orange-500'
-                          : 'bg-primary'
-                  }`}
-                />
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  />
+                </svg>
               </button>
 
               {/* Thinking Mode Button */}
               {provider === 'claude' && (
-                <div className="flex items-center">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const modes = ['default', 'extended', 'deep'];
-                      const currentIndex = modes.indexOf(thinkingMode);
-                      const nextMode = modes[(currentIndex + 1) % modes.length];
-                      setThinkingMode(nextMode);
-                    }}
-                    className={`flex h-6 w-6 items-center justify-center rounded-lg border transition-all duration-200 ${
-                      thinkingMode === 'default'
-                        ? 'border-border/60 bg-muted/50 text-muted-foreground hover:bg-muted'
-                        : thinkingMode === 'extended'
-                          ? 'border-blue-300/60 bg-blue-50 text-blue-700 hover:bg-blue-100 dark:border-blue-600/40 dark:bg-blue-900/15 dark:text-blue-300 dark:hover:bg-blue-900/25'
-                          : 'border-purple-300/60 bg-purple-50 text-purple-700 hover:bg-purple-100 dark:border-purple-600/40 dark:bg-purple-900/15 dark:text-purple-300 dark:hover:bg-purple-900/25'
-                    }`}
-                    title={`Thinking mode: ${thinkingMode}`}
-                  >
-                    <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-                      />
-                    </svg>
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const modes = ['default', 'extended', 'deep'];
+                    const currentIndex = modes.indexOf(thinkingMode);
+                    const nextMode = modes[(currentIndex + 1) % modes.length];
+                    setThinkingMode(nextMode);
+                  }}
+                  className={`rounded-lg p-2 transition-all duration-200 ${
+                    thinkingMode === 'default'
+                      ? 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                      : thinkingMode === 'extended'
+                        ? 'bg-blue-100 text-blue-600 hover:bg-blue-200 dark:bg-blue-900/25 dark:text-blue-400 dark:hover:bg-blue-900/40'
+                        : 'bg-purple-100 text-purple-600 hover:bg-purple-200 dark:bg-purple-900/25 dark:text-purple-400 dark:hover:bg-purple-900/40'
+                  }`}
+                  title={`Thinking mode: ${thinkingMode}`}
+                >
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                    />
+                  </svg>
+                </button>
               )}
 
               {/* Commands Button */}
               <button
                 type="button"
                 onClick={onToggleCommandMenu}
-                className="relative flex h-6 w-6 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground"
+                className="relative rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 title={t('input.showAllCommands')}
               >
-                <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -399,15 +394,15 @@ export default function ChatComposer({
                 event.preventDefault();
                 onSubmit(event);
               }}
-              className="absolute right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 transform items-center justify-center rounded-xl bg-primary transition-all duration-200 hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-1 focus:ring-offset-background disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground sm:h-11 sm:w-11"
+              className="absolute right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 transform items-center justify-center rounded-lg bg-primary transition-all duration-200 hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-1 focus:ring-offset-background disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground sm:h-10 sm:w-10"
             >
-              <svg className="h-4 w-4 rotate-90 transform text-primary-foreground sm:h-[18px] sm:w-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              <svg className="h-5 w-5 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
               </svg>
             </button>
 
             <div
-              className={`pointer-events-none absolute bottom-1 left-12 right-14 hidden text-xs text-muted-foreground/50 transition-opacity duration-200 sm:right-40 sm:block ${
+              className={`pointer-events-none absolute bottom-3 left-14 right-14 hidden text-xs text-muted-foreground/50 transition-opacity duration-200 sm:block ${
                 input.trim() ? 'opacity-0' : 'opacity-100'
               }`}
             >
@@ -418,7 +413,7 @@ export default function ChatComposer({
       </form>}
 
       {!hasQuestionPanel && (
-        <div className="mx-auto mt-2 max-w-4xl">
+        <div className="mx-auto mt-2 max-w-3xl px-4">
           <ChatInputControls
             permissionMode={permissionMode}
             onModeSwitch={onModeSwitch}

@@ -37,7 +37,8 @@ export async function queryClaudeAPI(command, options, writer) {
     if (!options?.sessionId) {
       writer.send({
         kind: 'session_created',
-        sessionId,
+        newSessionId: sessionId,
+        sessionId: sessionId,
         timestamp: new Date().toISOString()
       });
     }
@@ -71,6 +72,18 @@ export async function queryClaudeAPI(command, options, writer) {
       const errorText = await response.text();
       throw new Error(`API error: ${response.status} ${errorText}`);
     }
+
+    // Send status message to show "thinking"
+    writer.send({
+      kind: 'status',
+      sessionId,
+      status: {
+        text: 'Thinking...',
+        tokens: 0,
+        can_interrupt: true
+      },
+      timestamp: new Date().toISOString()
+    });
 
     // Stream response using async iterator (Node.js native)
     let buffer = '';
@@ -114,6 +127,12 @@ export async function queryClaudeAPI(command, options, writer) {
             if (event.type === 'message_stop') {
               writer.send({
                 kind: 'stream_end',
+                sessionId,
+                timestamp: new Date().toISOString()
+              });
+
+              writer.send({
+                kind: 'complete',
                 sessionId,
                 timestamp: new Date().toISOString()
               });
