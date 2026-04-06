@@ -891,9 +891,19 @@ async function parseJsonlSessions(filePath) {
     for (const session of sessions.values()) {
       if (session.summary === 'New Session') {
         // Prefer last user message, fall back to last assistant message
-        const lastMessage = session.lastUserMessage || session.lastAssistantMessage;
+        let lastMessage = session.lastUserMessage || session.lastAssistantMessage;
         if (lastMessage) {
-          session.summary = lastMessage.length > 50 ? lastMessage.substring(0, 50) + '...' : lastMessage;
+          // Filter out system tags from summary
+          lastMessage = lastMessage
+            .replace(/<task-notification>[\s\S]*?<\/task-notification>/g, '')
+            .replace(/<system-reminder>[\s\S]*?<\/system-reminder>/g, '')
+            .replace(/<task-permission>[\s\S]*?<\/task-permission>/g, '')
+            .replace(/<command-name>[\s\S]*?<\/command-name>/g, '')
+            .trim();
+
+          if (lastMessage) {
+            session.summary = lastMessage.length > 50 ? lastMessage.substring(0, 50) + '...' : lastMessage;
+          }
         }
       }
     }
