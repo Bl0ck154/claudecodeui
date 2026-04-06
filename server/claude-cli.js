@@ -31,7 +31,7 @@ async function spawnClaude(command, options = {}, ws) {
         baseArgs.push('--model', model);
       }
 
-      baseArgs.push('--output-format', 'stream-json');
+      baseArgs.push('--output-format', 'stream-json', '--verbose');
     }
 
     // Use cwd (actual project directory)
