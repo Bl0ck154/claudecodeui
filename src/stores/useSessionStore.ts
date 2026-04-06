@@ -273,6 +273,10 @@ export function useSessionStore() {
    */
   const appendRealtime = useCallback((sessionId: string, msg: NormalizedMessage) => {
     const slot = getSlot(sessionId);
+    // Deduplicate by id - don't add if already exists
+    if (slot.realtimeMessages.some(m => m.id === msg.id)) {
+      return;
+    }
     let updated = [...slot.realtimeMessages, msg];
     if (updated.length > MAX_REALTIME_MESSAGES) {
       updated = updated.slice(-MAX_REALTIME_MESSAGES);

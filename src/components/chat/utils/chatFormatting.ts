@@ -1,11 +1,11 @@
 export function decodeHtmlEntities(text: string) {
   if (!text) return text;
   return text
+    .replace(/&amp;/g, '&')  // Decode &amp; FIRST to avoid breaking other entities
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&amp;/g, '&');
+    .replace(/&#39;/g, "'");
 }
 
 export function normalizeInlineCodeFences(text: string) {
