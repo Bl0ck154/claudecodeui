@@ -194,10 +194,7 @@ export function useChatRealtimeHandlers({
           }
         }, 100);
       }
-      // Also route to store for non-active sessions
-      if (sid && sid !== activeViewSessionId) {
-        sessionStore.appendRealtime(sid, msg as NormalizedMessage);
-      }
+      // Don't append stream_delta to store - updateStreaming handles it
       return;
     }
 
