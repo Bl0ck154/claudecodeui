@@ -339,7 +339,7 @@ export default function SidebarProjectItem({
               ) : (
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <div className="truncate text-[13px] font-medium text-gray-900 dark:text-gray-100" title={project.displayName}>
+                    <div className="truncate text-[13px] font-medium text-gray-900 dark:text-gray-100 max-w-[180px]" title={project.displayName}>
                       {project.displayName}
                     </div>
                     {hasActiveSessions && (

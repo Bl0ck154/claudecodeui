@@ -65,7 +65,8 @@
     "save": "Save",
     "delete": "Delete",
     "rename": "Rename",
-    "joinCommunity": "Join Community"
+    "joinCommunity": "Join Community",
+    "viewRepository": "View Repository"
   },
   "status": {
     "active": "Active",

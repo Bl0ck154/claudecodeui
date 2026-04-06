@@ -5,6 +5,7 @@ import { formatTimeAgo } from '../../../../utils/dateUtils';
 import type { Project, ProjectSession, SessionProvider } from '../../../../types/app';
 import type { SessionWithProvider } from '../../types/types';
 import { createSessionViewModel } from '../../utils/utils';
+import SessionProviderLogo from '../../../llm-logo-provider/SessionProviderLogo';
 
 type SidebarSessionItemProps = {
   project: Project;
@@ -75,10 +76,13 @@ export default function SidebarSessionItem({
           aria-label={`Select conversation: ${sessionView.sessionName}`}
           aria-current={isSelected ? 'page' : undefined}
         >
-          <div className="text-sm font-normal truncate leading-tight text-gray-900 dark:text-gray-100">
-            {sessionView.sessionName}
+          <div className="flex items-center gap-2">
+            <SessionProviderLogo provider={session.__provider} className="w-4 h-4 flex-shrink-0" />
+            <div className="text-sm font-normal truncate leading-tight text-gray-900 dark:text-gray-100">
+              {sessionView.sessionName}
+            </div>
           </div>
-          <div className="flex items-center gap-2 mt-1">
+          <div className="flex items-center gap-2 mt-1 ml-6">
             <span className="text-xs font-normal text-gray-500 dark:text-gray-400">
               {formatTimeAgo(sessionView.sessionTime, currentTime, t)}
             </span>
@@ -102,7 +106,8 @@ export default function SidebarSessionItem({
           aria-label={`Select conversation: ${sessionView.sessionName}`}
           aria-current={isSelected ? 'page' : undefined}
         >
-          <div className="flex items-start gap-2 pr-16">
+          <div className="flex items-start gap-2 pr-8">
+            <SessionProviderLogo provider={session.__provider} className="w-4 h-4 flex-shrink-0 mt-0.5" />
             <div className="text-sm font-normal truncate flex-1 leading-tight text-gray-900 dark:text-gray-100">
               {sessionView.sessionName}
             </div>
@@ -110,7 +115,7 @@ export default function SidebarSessionItem({
               <span className="flex-shrink-0 h-1.5 w-1.5 rounded-full bg-green-500 mt-1.5" aria-label="Active conversation" />
             )}
           </div>
-          <div className="text-xs font-normal mt-1 text-gray-500 dark:text-gray-400">
+          <div className="text-xs font-normal mt-1 ml-6 text-gray-500 dark:text-gray-400">
             {formatTimeAgo(sessionView.sessionTime, currentTime, t)}
             {sessionView.messageCount > 0 && (
               <span className="opacity-0 group-hover/session:opacity-100 transition-opacity">

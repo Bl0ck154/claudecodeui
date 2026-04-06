@@ -50,8 +50,8 @@ export function normalizedToChatMessages(messages: NormalizedMessage[]): ChatMes
           let text = decodeHtmlEntities(content);
           text = unescapeWithMathProtection(text);
           text = formatUsageLimitText(text);
-          // Remove agent name and timestamp from responses
-          text = text.replace(/^[A-Z][a-z]+\s*\*\*.*?\*\*\.?\s*/i, '');
+          // Remove agent name and timestamp from responses - more precise patterns
+          text = text.replace(/^(Claude|Assistant|Agent)\s*\*\*\d{1,2}:\d{2}(:\d{2})?\s*(AM|PM)?\*\*\.?\s*/i, '');
           text = text.replace(/^Claude[\s\n]+/i, '');
           converted.push({
             type: 'assistant',
@@ -112,8 +112,8 @@ export function normalizedToChatMessages(messages: NormalizedMessage[]): ChatMes
       case 'thinking':
         if (msg.content?.trim()) {
           let text = unescapeWithMathProtection(msg.content);
-          // Remove agent name and timestamp from thinking blocks
-          text = text.replace(/^[A-Z][a-z]+\s*\*\*.*?\*\*\.?\s*/i, '');
+          // Remove agent name and timestamp from thinking blocks - more precise patterns
+          text = text.replace(/^(Claude|Assistant|Agent)\s*\*\*\d{1,2}:\d{2}(:\d{2})?\s*(AM|PM)?\*\*\.?\s*/i, '');
           text = text.replace(/^Claude[\s\n]+/i, '');
           converted.push({
             type: 'assistant',
@@ -126,8 +126,8 @@ export function normalizedToChatMessages(messages: NormalizedMessage[]): ChatMes
 
       case 'error':
         let errorText = msg.content || 'Unknown error';
-        // Remove agent name and timestamp from error messages
-        errorText = errorText.replace(/^[A-Z][a-z]+\s*\*\*.*?\*\*\.?\s*/i, '');
+        // Remove agent name and timestamp from error messages - more precise patterns
+        errorText = errorText.replace(/^(Claude|Assistant|Agent)\s*\*\*\d{1,2}:\d{2}(:\d{2})?\s*(AM|PM)?\*\*\.?\s*/i, '');
         errorText = errorText.replace(/^Claude[\s\n]+/i, '');
         converted.push({
           type: 'error',
@@ -138,8 +138,8 @@ export function normalizedToChatMessages(messages: NormalizedMessage[]): ChatMes
 
       case 'interactive_prompt':
         let promptText = msg.content || '';
-        // Remove agent name and timestamp from interactive prompts
-        promptText = promptText.replace(/^[A-Z][a-z]+\s*\*\*.*?\*\*\.?\s*/i, '');
+        // Remove agent name and timestamp from interactive prompts - more precise patterns
+        promptText = promptText.replace(/^(Claude|Assistant|Agent)\s*\*\*\d{1,2}:\d{2}(:\d{2})?\s*(AM|PM)?\*\*\.?\s*/i, '');
         promptText = promptText.replace(/^Claude[\s\n]+/i, '');
         converted.push({
           type: 'assistant',
@@ -162,8 +162,8 @@ export function normalizedToChatMessages(messages: NormalizedMessage[]): ChatMes
       case 'stream_delta':
         if (msg.content) {
           let streamText = msg.content;
-          // Remove agent name and timestamp from streaming content
-          streamText = streamText.replace(/^[A-Z][a-z]+\s*\*\*.*?\*\*\.?\s*/i, '');
+          // Remove agent name and timestamp from streaming content - more precise patterns
+          streamText = streamText.replace(/^(Claude|Assistant|Agent)\s*\*\*\d{1,2}:\d{2}(:\d{2})?\s*(AM|PM)?\*\*\.?\s*/i, '');
           streamText = streamText.replace(/^Claude[\s\n]+/i, '');
           converted.push({
             type: 'assistant',
