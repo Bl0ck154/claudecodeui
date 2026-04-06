@@ -67,7 +67,7 @@ export default function SidebarSessionItem({
       <div className="md:hidden">
         <button
           className={cn(
-            'w-full px-3 py-2.5 text-left transition-colors',
+            'w-full px-3 py-2.5 text-left transition-colors relative',
             isSelected
               ? 'bg-gray-100 dark:bg-gray-800'
               : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
@@ -76,19 +76,19 @@ export default function SidebarSessionItem({
           aria-label={`Select conversation: ${sessionView.sessionName}`}
           aria-current={isSelected ? 'page' : undefined}
         >
-          <div className="flex items-center gap-2">
-            <SessionProviderLogo provider={session.__provider} className="w-4 h-4 flex-shrink-0" />
-            <div className="text-sm font-normal truncate leading-tight text-gray-900 dark:text-gray-100">
-              {sessionView.sessionName}
+          <div className="flex items-start gap-2 pr-6 select-text">
+            <SessionProviderLogo provider={session.__provider} className="w-4 h-4 flex-shrink-0 mt-0.5" />
+            <div className="flex items-center gap-1.5 flex-1 min-w-0">
+              <div className="text-sm font-normal truncate leading-tight text-gray-900 dark:text-gray-100">
+                {sessionView.sessionName}
+              </div>
+              {sessionView.isActive && (
+                <span className="flex-shrink-0 h-1.5 w-1.5 rounded-full bg-green-500" aria-label="Active conversation" />
+              )}
             </div>
           </div>
-          <div className="flex items-center gap-2 mt-1 ml-6">
-            <span className="text-xs font-normal text-gray-500 dark:text-gray-400">
-              {formatTimeAgo(sessionView.sessionTime, currentTime, t)}
-            </span>
-            {sessionView.isActive && (
-              <span className="ml-auto h-1.5 w-1.5 rounded-full bg-green-500" aria-label="Active conversation" />
-            )}
+          <div className="text-xs font-normal mt-1 ml-6 text-gray-500 dark:text-gray-400">
+            {formatTimeAgo(sessionView.sessionTime, currentTime, t)}
           </div>
         </button>
       </div>
@@ -106,7 +106,7 @@ export default function SidebarSessionItem({
           aria-label={`Select conversation: ${sessionView.sessionName}`}
           aria-current={isSelected ? 'page' : undefined}
         >
-          <div className="flex items-start gap-2 pr-16 select-text">
+          <div className="flex items-start gap-2 pr-6 select-text">
             <SessionProviderLogo provider={session.__provider} className="w-4 h-4 flex-shrink-0 mt-0.5" />
             <div className="flex items-center gap-1.5 flex-1 min-w-0">
               <div className="text-sm font-normal truncate leading-tight text-gray-900 dark:text-gray-100">
@@ -127,7 +127,7 @@ export default function SidebarSessionItem({
           </div>
 
           {/* Actions on hover */}
-          <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5 opacity-0 group-hover/session:opacity-100 transition-opacity">
+          <div className="absolute right-2 bottom-2 flex items-center gap-0.5 opacity-0 group-hover/session:opacity-100 transition-opacity">
             {editingSession === session.id ? (
               <>
                 <input
