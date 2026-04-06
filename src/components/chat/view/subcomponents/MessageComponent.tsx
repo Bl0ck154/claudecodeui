@@ -112,18 +112,13 @@ const MessageComponent = memo(({ message, prevMessage, createDiff, onFileOpen, o
     <div
       ref={messageRef}
       data-message-timestamp={message.timestamp || undefined}
-      className={`chat-message ${message.type} ${isGrouped ? 'grouped' : ''} mx-auto max-w-3xl px-4`}
+      className={`chat-message ${message.type} ${isGrouped ? 'grouped' : ''} px-4`}
     >
       {message.type === 'user' ? (
         /* User message bubble on the right */
-        <div className="flex w-full items-start space-x-3">
-          {!isGrouped && (
-            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-muted text-sm font-medium text-foreground">
-              U
-            </div>
-          )}
-          <div className="group flex-1 rounded-2xl bg-muted/50 px-4 py-3 shadow-sm">
-            <div className="whitespace-pre-wrap break-words text-sm text-foreground">
+        <div className="flex w-full items-start justify-end space-x-3">
+          <div className="group max-w-2xl rounded-2xl bg-blue-500 px-4 py-3 shadow-sm">
+            <div className="whitespace-pre-wrap break-words text-sm text-white">
               {message.content}
             </div>
             {message.images && message.images.length > 0 && (
@@ -139,13 +134,18 @@ const MessageComponent = memo(({ message, prevMessage, createDiff, onFileOpen, o
                 ))}
               </div>
             )}
-            <div className="mt-1 flex items-center justify-end gap-1 text-xs text-muted-foreground">
+            <div className="mt-1 flex items-center justify-end gap-1 text-xs text-blue-100">
               {shouldShowUserCopyControl && (
                 <MessageCopyControl content={userCopyContent} messageType="user" />
               )}
               <span>{formattedTime}</span>
             </div>
           </div>
+          {!isGrouped && (
+            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-500 text-sm font-medium text-white">
+              U
+            </div>
+          )}
         </div>
       ) : message.isTaskNotification ? (
         /* Compact task notification on the left */
@@ -157,29 +157,29 @@ const MessageComponent = memo(({ message, prevMessage, createDiff, onFileOpen, o
         </div>
       ) : (
         /* Claude/Error/Tool messages on the left */
-        <div className="w-full">
+        <div className="flex w-full items-start space-x-3">
           {!isGrouped && (
-            <div className="mb-2 flex items-center space-x-3">
-              {message.type === 'error' ? (
-                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-red-600 text-sm text-white">
-                  !
-                </div>
-              ) : message.type === 'tool' ? (
-                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-muted text-sm">
-                  🔧
-                </div>
-              ) : (
-                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 p-1.5">
-                  <SessionProviderLogo provider={provider} className="h-full w-full" />
-                </div>
-              )}
-              <div className="text-sm font-medium text-gray-900 dark:text-white">
-                {message.type === 'error' ? t('messageTypes.error') : message.type === 'tool' ? t('messageTypes.tool') : (provider === 'cursor' ? t('messageTypes.cursor') : provider === 'codex' ? t('messageTypes.codex') : provider === 'gemini' ? t('messageTypes.gemini') : t('messageTypes.claude'))}
+            message.type === 'error' ? (
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-red-600 text-sm text-white">
+                !
               </div>
-            </div>
+            ) : message.type === 'tool' ? (
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-muted text-sm">
+                🔧
+              </div>
+            ) : (
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 p-1.5">
+                <SessionProviderLogo provider={provider} className="h-full w-full" />
+              </div>
+            )
           )}
 
-          <div className="w-full">
+          <div className="max-w-2xl flex-1">
+            {!isGrouped && (
+              <div className="mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                {message.type === 'error' ? t('messageTypes.error') : message.type === 'tool' ? t('messageTypes.tool') : (provider === 'cursor' ? t('messageTypes.cursor') : provider === 'codex' ? t('messageTypes.codex') : provider === 'gemini' ? t('messageTypes.gemini') : t('messageTypes.claude'))}
+              </div>
+            )}
 
             {message.isToolUse ? (
               <>

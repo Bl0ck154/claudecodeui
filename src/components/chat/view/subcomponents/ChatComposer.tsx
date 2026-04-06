@@ -283,8 +283,8 @@ export default function ChatComposer({
               onBlur={() => onInputFocusChange?.(false)}
               onInput={onTextareaInput}
               placeholder={placeholder}
-              className="chat-input-placeholder block max-h-[40vh] min-h-[48px] w-full resize-none overflow-y-auto rounded-xl bg-transparent py-3 pl-14 pr-14 text-base leading-6 text-foreground placeholder-muted-foreground/60 transition-all duration-200 focus:outline-none sm:max-h-[300px] sm:min-h-[48px] sm:py-3 sm:pr-14"
-              style={{ height: '48px', paddingLeft: '3.5rem' }}
+              className="chat-input-placeholder block max-h-[40vh] min-h-[48px] w-full resize-none overflow-y-auto rounded-xl bg-transparent py-3 pl-40 pr-14 text-base leading-6 text-foreground placeholder-muted-foreground/60 transition-all duration-200 focus:outline-none sm:max-h-[300px] sm:min-h-[48px] sm:py-3 sm:pr-14"
+              style={{ height: '48px' }}
             />
 
             <button
@@ -303,8 +303,8 @@ export default function ChatComposer({
               </svg>
             </button>
 
-            {/* Control buttons - positioned at bottom-left */}
-            <div className="absolute bottom-2 left-14 flex items-center gap-1">
+            {/* Control buttons - positioned at bottom-left with more space */}
+            <div className="absolute bottom-2 left-12 flex items-center gap-1">
               {/* Permission Mode Button */}
               <button
                 type="button"
