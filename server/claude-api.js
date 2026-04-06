@@ -169,12 +169,46 @@ export async function queryClaudeAPI(command, options, writer) {
     let buffer = '';
     let hasReceivedData = false;
     let accumulatedText = '';
-    const decoder = new TextDecoder('utf-8');
+    const decoder = new TextDecoder('utf-8', { fatal: false });
+    let incompleteBytes = Buffer.alloc(0);
 
     try {
       for await (const chunk of response.body) {
         hasReceivedData = true;
-        const chunkStr = decoder.decode(chunk, { stream: true });
+
+        // Concatenate with any incomplete bytes from previous chunk
+        const fullChunk = Buffer.concat([incompleteBytes, Buffer.from(chunk)]);
+
+        // Try to decode, keeping incomplete UTF-8 sequences for next iteration
+        let chunkStr = '';
+        let validBytes = fullChunk.length;
+
+        // Check if last 1-3 bytes might be incomplete UTF-8 sequence
+        for (let i = Math.max(0, fullChunk.length - 3); i < fullChunk.length; i++) {
+          const byte = fullChunk[i];
+          // Check if this starts a multi-byte UTF-8 sequence
+          if ((byte & 0x80) !== 0) {
+            // Count expected bytes in this sequence
+            let expectedBytes = 0;
+            if ((byte & 0xE0) === 0xC0) expectedBytes = 2;
+            else if ((byte & 0xF0) === 0xE0) expectedBytes = 3;
+            else if ((byte & 0xF8) === 0xF0) expectedBytes = 4;
+
+            const remainingBytes = fullChunk.length - i;
+            if (remainingBytes < expectedBytes) {
+              // Incomplete sequence - save for next chunk
+              validBytes = i;
+              incompleteBytes = fullChunk.slice(i);
+              break;
+            }
+          }
+        }
+
+        if (validBytes === fullChunk.length) {
+          incompleteBytes = Buffer.alloc(0);
+        }
+
+        chunkStr = decoder.decode(fullChunk.slice(0, validBytes));
         console.log('[Claude API] Received chunk:', chunkStr.substring(0, 200));
 
         buffer += chunkStr;
