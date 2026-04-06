@@ -53,6 +53,13 @@ export function normalizedToChatMessages(messages: NormalizedMessage[]): ChatMes
           // Remove agent name and timestamp from responses - more precise patterns
           text = text.replace(/^(Claude|Assistant|Agent)\s*\*\*\d{1,2}:\d{2}(:\d{2})?\s*(AM|PM)?\*\*\.?\s*/i, '');
           text = text.replace(/^Claude[\s\n]+/i, '');
+
+          // Skip very short messages with only special characters or dots
+          const trimmedText = text.trim();
+          if (trimmedText.length <= 3 && /^[●•\.\s…]+$/.test(trimmedText)) {
+            continue;
+          }
+
           converted.push({
             type: 'assistant',
             content: text,
