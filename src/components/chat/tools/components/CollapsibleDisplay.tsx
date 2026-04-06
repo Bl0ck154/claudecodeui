@@ -58,7 +58,7 @@ export const CollapsibleDisplay: React.FC<CollapsibleDisplayProps> = ({
 
         {showRawParameters && rawContent && (
           <details className="group/raw relative mt-2">
-            <summary className="flex cursor-pointer items-center gap-1.5 py-0.5 text-[11px] text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">
+            <summary className="flex cursor-pointer items-center gap-1.5 py-0.5 text-[11px] text-gray-500 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">
               <svg
                 className="h-2.5 w-2.5 transition-transform duration-150 group-open/raw:rotate-90"
                 fill="none"
@@ -69,7 +69,7 @@ export const CollapsibleDisplay: React.FC<CollapsibleDisplayProps> = ({
               </svg>
               raw params
             </summary>
-            <pre className="mt-1 overflow-hidden whitespace-pre-wrap break-words rounded border border-gray-200/40 bg-gray-50 p-2 font-mono text-[11px] text-gray-600 dark:border-gray-700/40 dark:bg-gray-900/50 dark:text-gray-400">
+            <pre className="mt-1 overflow-hidden whitespace-pre-wrap break-words rounded border border-gray-200/40 bg-gray-50 p-2 font-mono text-[11px] text-gray-600 dark:border-gray-700/40 dark:bg-gray-900/50 dark:text-gray-500">
               {rawContent}
             </pre>
           </details>

@@ -1,12 +1,10 @@
-import { Check, Clock, Edit2, Trash2, X } from 'lucide-react';
+import { Check, Edit2, Trash2, X } from 'lucide-react';
 import type { TFunction } from 'i18next';
-import { Badge, Button } from '../../../../shared/view/ui';
 import { cn } from '../../../../lib/utils';
 import { formatTimeAgo } from '../../../../utils/dateUtils';
 import type { Project, ProjectSession, SessionProvider } from '../../../../types/app';
 import type { SessionWithProvider } from '../../types/types';
 import { createSessionViewModel } from '../../utils/utils';
-import SessionProviderLogo from '../../../llm-logo-provider/SessionProviderLogo';
 
 type SidebarSessionItemProps = {
   project: Project;
@@ -63,102 +61,66 @@ export default function SidebarSessionItem({
   };
 
   return (
-    <div className="group relative">
-      {sessionView.isActive && (
-        <div className="absolute left-0 top-1/2 -translate-x-1 -translate-y-1/2 transform">
-          <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
-        </div>
-      )}
-
+    <>
+      {/* Mobile */}
       <div className="md:hidden">
-        <div
+        <button
           className={cn(
-            'p-2 mx-3 my-0.5 rounded-md bg-card border active:scale-[0.98] transition-all duration-150 relative',
-            isSelected ? 'bg-primary/5 border-primary/20' : '',
-            !isSelected && sessionView.isActive
-              ? 'border-green-500/30 bg-green-50/5 dark:bg-green-900/5'
-              : 'border-border/30',
+            'w-full px-3 py-2.5 text-left transition-colors',
+            isSelected
+              ? 'bg-gray-100 dark:bg-gray-800'
+              : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
           )}
           onClick={selectMobileSession}
+          aria-label={`Select conversation: ${sessionView.sessionName}`}
+          aria-current={isSelected ? 'page' : undefined}
         >
-          <div className="flex items-center gap-2">
-            <div
-              className={cn(
-                'w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0',
-                isSelected ? 'bg-primary/10' : 'bg-muted/50',
-              )}
-            >
-              <SessionProviderLogo provider={session.__provider} className="h-3 w-3" />
-            </div>
-
-            <div className="min-w-0 flex-1">
-              <div className="truncate text-xs font-medium text-foreground">{sessionView.sessionName}</div>
-              <div className="mt-0.5 flex items-center gap-1">
-                <Clock className="h-2.5 w-2.5 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">
-                  {formatTimeAgo(sessionView.sessionTime, currentTime, t)}
-                </span>
-                {sessionView.messageCount > 0 && (
-                  <Badge variant="secondary" className="ml-auto px-1 py-0 text-xs">
-                    {sessionView.messageCount}
-                  </Badge>
-                )}
-                <span className="ml-1 opacity-70">
-                  <SessionProviderLogo provider={session.__provider} className="h-3 w-3" />
-                </span>
-              </div>
-            </div>
-
-            {!sessionView.isCursorSession && (
-              <button
-                className="ml-1 flex h-5 w-5 items-center justify-center rounded-md bg-red-50 opacity-70 transition-transform active:scale-95 dark:bg-red-900/20"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  requestDeleteSession();
-                }}
-              >
-                <Trash2 className="h-2.5 w-2.5 text-red-600 dark:text-red-400" />
-              </button>
+          <div className="text-sm font-normal truncate leading-tight text-gray-900 dark:text-gray-100">
+            {sessionView.sessionName}
+          </div>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-xs font-normal text-gray-500 dark:text-gray-400">
+              {formatTimeAgo(sessionView.sessionTime, currentTime, t)}
+            </span>
+            {sessionView.isActive && (
+              <span className="ml-auto h-1.5 w-1.5 rounded-full bg-green-500" aria-label="Active conversation" />
             )}
           </div>
-        </div>
+        </button>
       </div>
 
-      <div className="hidden md:block">
-        <Button
-          variant="ghost"
+      {/* Desktop */}
+      <div className="hidden md:block group/session">
+        <button
           className={cn(
-            'w-full justify-start p-2 h-auto font-normal text-left hover:bg-accent/50 transition-colors duration-200',
-            isSelected && 'bg-accent text-accent-foreground',
+            'w-full px-3 py-2 text-left transition-colors relative',
+            isSelected
+              ? 'bg-gray-100 dark:bg-gray-800'
+              : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
           )}
           onClick={() => onSessionSelect(session, project.name)}
+          aria-label={`Select conversation: ${sessionView.sessionName}`}
+          aria-current={isSelected ? 'page' : undefined}
         >
-          <div className="flex w-full min-w-0 items-start gap-2">
-            <SessionProviderLogo provider={session.__provider} className="mt-0.5 h-3 w-3 flex-shrink-0" />
-            <div className="min-w-0 flex-1">
-              <div className="truncate text-xs font-medium text-foreground">{sessionView.sessionName}</div>
-              <div className="mt-0.5 flex items-center gap-1">
-                <Clock className="h-2.5 w-2.5 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">
-                  {formatTimeAgo(sessionView.sessionTime, currentTime, t)}
-                </span>
-                {sessionView.messageCount > 0 && (
-                  <Badge
-                    variant="secondary"
-                    className="ml-auto px-1 py-0 text-xs transition-opacity group-hover:opacity-0"
-                  >
-                    {sessionView.messageCount}
-                  </Badge>
-                )}
-                <span className="ml-1 opacity-70 transition-opacity group-hover:opacity-0">
-                  <SessionProviderLogo provider={session.__provider} className="h-3 w-3" />
-                </span>
-              </div>
+          <div className="flex items-start gap-2 pr-16">
+            <div className="text-sm font-normal truncate flex-1 leading-tight text-gray-900 dark:text-gray-100">
+              {sessionView.sessionName}
             </div>
+            {sessionView.isActive && (
+              <span className="flex-shrink-0 h-1.5 w-1.5 rounded-full bg-green-500 mt-1.5" aria-label="Active conversation" />
+            )}
           </div>
-        </Button>
+          <div className="text-xs font-normal mt-1 text-gray-500 dark:text-gray-400">
+            {formatTimeAgo(sessionView.sessionTime, currentTime, t)}
+            {sessionView.messageCount > 0 && (
+              <span className="opacity-0 group-hover/session:opacity-100 transition-opacity">
+                {' · '}{sessionView.messageCount} messages
+              </span>
+            )}
+          </div>
 
-        <div className="absolute right-2 top-1/2 flex -translate-y-1/2 transform items-center gap-1 opacity-0 transition-all duration-200 group-hover:opacity-100">
+          {/* Actions on hover */}
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5 opacity-0 group-hover/session:opacity-100 transition-opacity">
             {editingSession === session.id ? (
               <>
                 <input
@@ -167,65 +129,64 @@ export default function SidebarSessionItem({
                   onChange={(event) => onEditingSessionNameChange(event.target.value)}
                   onKeyDown={(event) => {
                     event.stopPropagation();
-                    if (event.key === 'Enter') {
-                      saveEditedSession();
-                    } else if (event.key === 'Escape') {
-                      onCancelEditingSession();
-                    }
+                    if (event.key === 'Enter') saveEditedSession();
+                    else if (event.key === 'Escape') onCancelEditingSession();
                   }}
                   onClick={(event) => event.stopPropagation()}
-                  className="w-32 rounded border border-border bg-background px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="w-36 rounded px-2 py-1 text-xs bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-gray-500"
                   autoFocus
+                  aria-label="Edit conversation name"
                 />
                 <button
-                  className="flex h-6 w-6 items-center justify-center rounded bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/40"
+                  className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                   onClick={(event) => {
                     event.stopPropagation();
                     saveEditedSession();
                   }}
-                  title={t('tooltips.save')}
+                  aria-label="Save"
                 >
-                  <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
+                  <Check className="h-4 w-4 text-green-600 dark:text-green-500" />
                 </button>
                 <button
-                  className="flex h-6 w-6 items-center justify-center rounded bg-gray-50 hover:bg-gray-100 dark:bg-gray-900/20 dark:hover:bg-gray-900/40"
+                  className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                   onClick={(event) => {
                     event.stopPropagation();
                     onCancelEditingSession();
                   }}
-                  title={t('tooltips.cancel')}
+                  aria-label="Cancel"
                 >
-                  <X className="h-3 w-3 text-gray-600 dark:text-gray-400" />
+                  <X className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                 </button>
               </>
             ) : (
               <>
                 <button
-                  className="flex h-6 w-6 items-center justify-center rounded bg-gray-50 hover:bg-gray-100 dark:bg-gray-900/20 dark:hover:bg-gray-900/40"
+                  className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                   onClick={(event) => {
                     event.stopPropagation();
                     onStartEditingSession(session.id, sessionView.sessionName);
                   }}
-                  title={t('tooltips.editSessionName')}
+                  aria-label={t('tooltips.editSessionName')}
                 >
-                  <Edit2 className="h-3 w-3 text-gray-600 dark:text-gray-400" />
+                  <Edit2 className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                 </button>
                 {!sessionView.isCursorSession && (
                   <button
-                    className="flex h-6 w-6 items-center justify-center rounded bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40"
+                    className="p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                     onClick={(event) => {
                       event.stopPropagation();
                       requestDeleteSession();
                     }}
-                    title={t('tooltips.deleteSession')}
+                    aria-label={t('tooltips.deleteSession')}
                   >
-                    <Trash2 className="h-3 w-3 text-red-600 dark:text-red-400" />
+                    <Trash2 className="h-4 w-4 text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-500" />
                   </button>
                 )}
               </>
             )}
           </div>
+        </button>
       </div>
-    </div>
+    </>
   );
 }

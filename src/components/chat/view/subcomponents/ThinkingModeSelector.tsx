@@ -78,7 +78,7 @@ function ThinkingModeSelector({ selectedMode, onModeChange, onClose, className =
                 <X className="h-4 w-4 text-gray-500" />
               </button>
             </div>
-            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-500">
               {t('thinkingMode.selector.description')}
             </p>
           </div>
@@ -100,7 +100,7 @@ function ThinkingModeSelector({ selectedMode, onModeChange, onClose, className =
                     }`}
                 >
                   <div className="flex items-start gap-3">
-                    <div className={`mt-0.5 ${mode.icon ? mode.color : 'text-gray-400'}`}>
+                    <div className={`mt-0.5 ${mode.icon ? mode.color : 'text-gray-500'}`}>
                       {ModeIcon ? <ModeIcon className="h-5 w-5" /> : <div className="h-5 w-5" />}
                     </div>
                     <div className="min-w-0 flex-1">
@@ -115,7 +115,7 @@ function ThinkingModeSelector({ selectedMode, onModeChange, onClose, className =
                           </span>
                         )}
                       </div>
-                      <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                      <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-500">
                         {mode.description}
                       </p>
                       {mode.prefix && (
@@ -131,7 +131,7 @@ function ThinkingModeSelector({ selectedMode, onModeChange, onClose, className =
           </div>
 
           <div className="border-t border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-900">
-            <p className="text-xs text-gray-600 dark:text-gray-400">
+            <p className="text-xs text-gray-600 dark:text-gray-500">
               <strong>Tip:</strong> {t('thinkingMode.selector.tip')}
             </p>
           </div>

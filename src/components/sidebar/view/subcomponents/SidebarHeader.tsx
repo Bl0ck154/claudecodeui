@@ -40,13 +40,13 @@ export default function SidebarHeader({
   t,
 }: SidebarHeaderProps) {
   const LogoBlock = () => (
-    <div className="flex min-w-0 items-center gap-2.5">
-      <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-primary/90 shadow-sm">
-        <svg className="h-3.5 w-3.5 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
+    <div className="flex min-w-0 items-center gap-2">
+      <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-lg bg-gray-800 dark:bg-gray-700">
+        <svg className="h-3 w-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
         </svg>
       </div>
-      <h1 className="truncate text-sm font-semibold tracking-tight text-foreground">{t('app.title')}</h1>
+      <h1 className="truncate text-[13px] font-semibold tracking-tight text-gray-900 dark:text-gray-100">{t('app.title')}</h1>
     </div>
   );
 
@@ -54,14 +54,14 @@ export default function SidebarHeader({
     <div className="flex-shrink-0">
       {/* Desktop header */}
       <div
-        className="hidden px-3 pb-2 pt-3 md:block"
+        className="hidden px-2.5 pb-2 pt-2.5 md:block"
         style={{}}
       >
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center justify-between gap-2 mb-2.5">
           {IS_PLATFORM ? (
             <a
               href="https://cloudcli.ai/dashboard"
-              className="flex min-w-0 items-center gap-2.5 transition-opacity hover:opacity-80"
+              className="flex min-w-0 items-center gap-2 transition-opacity hover:opacity-70"
               title={t('tooltips.viewEnvironments')}
             >
               <LogoBlock />
@@ -74,7 +74,7 @@ export default function SidebarHeader({
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 w-7 rounded-lg p-0 text-muted-foreground hover:bg-accent/80 hover:text-foreground"
+              className="h-6 w-6 rounded-md p-0 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300"
               onClick={onRefresh}
               disabled={isRefreshing}
               title={t('tooltips.refresh')}
@@ -88,7 +88,7 @@ export default function SidebarHeader({
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 w-7 rounded-lg p-0 text-muted-foreground hover:bg-accent/80 hover:text-foreground"
+              className="h-6 w-6 rounded-md p-0 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300"
               onClick={onCreateProject}
               title={t('tooltips.createProject')}
             >
@@ -97,7 +97,7 @@ export default function SidebarHeader({
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 w-7 rounded-lg p-0 text-muted-foreground hover:bg-accent/80 hover:text-foreground"
+              className="h-6 w-6 rounded-md p-0 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300"
               onClick={onCollapseSidebar}
               title={t('tooltips.hideSidebar')}
             >
@@ -108,17 +108,17 @@ export default function SidebarHeader({
 
         {/* Search bar */}
         {projectsCount > 0 && !isLoading && (
-          <div className="mt-2.5 space-y-2">
+          <div className="space-y-2">
             {/* Search mode toggle */}
-            <div className="flex rounded-lg bg-muted/50 p-0.5">
+            <div className="flex rounded-md bg-gray-100 dark:bg-gray-800 p-0.5">
               <button
                 onClick={() => onSearchModeChange('projects')}
                 aria-pressed={searchMode === 'projects'}
                 className={cn(
-                  "flex-1 flex items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-all",
+                  "flex-1 flex items-center justify-center gap-1.5 rounded px-2 py-1 text-[11px] font-medium transition-all",
                   searchMode === 'projects'
-                    ? "bg-background shadow-sm text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-gray-100"
+                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
                 )}
               >
                 <Folder className="h-3 w-3" />
@@ -128,10 +128,10 @@ export default function SidebarHeader({
                 onClick={() => onSearchModeChange('conversations')}
                 aria-pressed={searchMode === 'conversations'}
                 className={cn(
-                  "flex-1 flex items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-all",
+                  "flex-1 flex items-center justify-center gap-1.5 rounded px-2 py-1 text-[11px] font-medium transition-all",
                   searchMode === 'conversations'
-                    ? "bg-background shadow-sm text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-gray-100"
+                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
                 )}
               >
                 <MessageSquare className="h-3 w-3" />
@@ -139,21 +139,21 @@ export default function SidebarHeader({
               </button>
             </div>
             <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/50" />
+              <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
               <Input
                 type="text"
                 placeholder={searchMode === 'conversations' ? t('search.conversationsPlaceholder') : t('projects.searchPlaceholder')}
                 value={searchFilter}
                 onChange={(event) => onSearchFilterChange(event.target.value)}
-                className="nav-search-input h-9 rounded-xl border-0 pl-9 pr-8 text-sm transition-all duration-200 placeholder:text-muted-foreground/40 focus-visible:ring-0 focus-visible:ring-offset-0"
+                className="h-8 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 pl-8 pr-7 text-[13px] transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-gray-400 dark:focus-visible:ring-gray-500 focus-visible:border-gray-400 dark:focus-visible:border-gray-500"
               />
               {searchFilter && (
                 <button
                   onClick={onClearSearchFilter}
                   aria-label={t('tooltips.clearSearch')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-0.5 hover:bg-accent"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-0.5 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
-                  <X className="h-3 w-3 text-muted-foreground" />
+                  <X className="h-3 w-3 text-gray-500 dark:text-gray-400" />
                 </button>
               )}
             </div>
@@ -162,7 +162,7 @@ export default function SidebarHeader({
       </div>
 
       {/* Desktop divider */}
-      <div className="nav-divider hidden md:block" />
+      <div className="hidden md:block h-px bg-gray-200 dark:bg-gray-800 mx-2" />
 
       {/* Mobile header */}
       <div
@@ -191,7 +191,7 @@ export default function SidebarHeader({
               <RefreshCw className={`h-4 w-4 text-muted-foreground ${isRefreshing ? 'animate-spin' : ''}`} />
             </button>
             <button
-              className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/90 text-primary-foreground transition-all active:scale-95"
+              className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 transition-all active:scale-95"
               onClick={onCreateProject}
             >
               <FolderPlus className="h-4 w-4" />

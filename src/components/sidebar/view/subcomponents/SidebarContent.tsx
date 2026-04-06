@@ -20,7 +20,7 @@ function HighlightedSnippet({ snippet, highlights }: { snippet: string; highligh
       parts.push(snippet.slice(cursor, h.start));
     }
     parts.push(
-      <mark key={h.start} className="rounded-sm bg-yellow-200 px-0.5 text-foreground dark:bg-yellow-800">
+      <mark key={h.start} className="rounded-sm bg-gray-200 dark:bg-gray-700 px-1 py-0.5 text-gray-900 dark:text-gray-100 font-medium">
         {snippet.slice(h.start, h.end)}
       </mark>
     );
@@ -30,7 +30,7 @@ function HighlightedSnippet({ snippet, highlights }: { snippet: string; highligh
     parts.push(snippet.slice(cursor));
   }
   return (
-    <span className="text-xs leading-relaxed text-muted-foreground">
+    <span className="text-xs leading-relaxed text-gray-600 dark:text-gray-400">
       {parts}
     </span>
   );
@@ -98,7 +98,7 @@ export default function SidebarContent({
 
   return (
     <div
-      className="flex h-full flex-col bg-background/80 backdrop-blur-sm md:w-72 md:select-none"
+      className="flex h-full flex-col bg-white dark:bg-gray-900 md:w-72 md:select-none border-r border-gray-200 dark:border-gray-800"
       style={{}}
     >
       <SidebarHeader
@@ -118,7 +118,7 @@ export default function SidebarContent({
         t={t}
       />
 
-      <ScrollArea className="flex-1 overflow-y-auto overscroll-contain md:px-1.5 md:py-2">
+      <ScrollArea className="flex-1 overflow-y-auto overscroll-contain md:px-2 md:py-2">
         {showConversationSearch ? (
           isSearching && !hasPartialResults ? (
             <div className="px-4 py-12 text-center md:py-8">
@@ -164,17 +164,17 @@ export default function SidebarContent({
                 </div>
               )}
               {conversationResults.results.map((projectResult) => (
-                <div key={projectResult.projectName} className="space-y-1">
-                  <div className="flex items-center gap-1.5 px-1 py-1">
-                    <Folder className="h-3 w-3 flex-shrink-0 text-muted-foreground" />
-                    <span className="truncate text-xs font-medium text-foreground">
+                <div key={projectResult.projectName} className="space-y-1.5">
+                  <div className="flex items-center gap-1.5 px-2 py-1.5">
+                    <Folder className="h-3 w-3 flex-shrink-0 text-gray-500 dark:text-gray-400" />
+                    <span className="truncate text-xs font-medium text-gray-900 dark:text-gray-100">
                       {projectResult.projectDisplayName}
                     </span>
                   </div>
                   {projectResult.sessions.map((session) => (
                     <button
                       key={`${projectResult.projectName}-${session.sessionId}`}
-                      className="w-full rounded-md px-2 py-2 text-left transition-colors hover:bg-accent/50"
+                      className="w-full rounded-lg px-3 py-2.5 text-left transition-all duration-200 hover:bg-gray-100/80 dark:hover:bg-gray-800/80 hover:shadow-sm border border-transparent hover:border-gray-200/50 dark:hover:border-gray-700/50"
                       onClick={() => onConversationResultClick(
                         projectResult.projectName,
                         session.sessionId,
@@ -183,21 +183,21 @@ export default function SidebarContent({
                         session.matches[0]?.snippet
                       )}
                     >
-                      <div className="mb-1 flex items-center gap-1.5">
-                        <MessageSquare className="h-3 w-3 flex-shrink-0 text-primary" />
-                        <span className="truncate text-xs font-medium text-foreground">
+                      <div className="mb-1.5 flex items-center gap-1.5">
+                        <MessageSquare className="h-3 w-3 flex-shrink-0 text-gray-500 dark:text-gray-400" />
+                        <span className="truncate text-xs font-medium text-gray-900 dark:text-gray-100">
                           {session.sessionSummary}
                         </span>
                         {session.provider && session.provider !== 'claude' && (
-                          <span className="flex-shrink-0 rounded bg-muted px-1 py-0.5 text-[9px] uppercase text-muted-foreground">
+                          <span className="flex-shrink-0 rounded bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 text-[9px] uppercase text-gray-600 dark:text-gray-400">
                             {session.provider}
                           </span>
                         )}
                       </div>
-                      <div className="space-y-1 pl-4">
+                      <div className="space-y-1.5 pl-4">
                         {session.matches.map((match, idx) => (
-                          <div key={idx} className="flex items-start gap-1">
-                            <span className="mt-0.5 flex-shrink-0 text-[10px] font-medium uppercase text-muted-foreground/60">
+                          <div key={idx} className="flex items-start gap-1.5">
+                            <span className="mt-0.5 flex-shrink-0 text-[10px] font-medium uppercase text-gray-500 dark:text-gray-400">
                               {match.role === 'user' ? 'U' : 'A'}
                             </span>
                             <HighlightedSnippet

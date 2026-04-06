@@ -34,22 +34,22 @@ export default function SidebarFooter({
       {/* Update banner */}
       {updateAvailable && (
         <>
-          <div className="nav-divider" />
+          <div className="h-px bg-gray-200 dark:bg-gray-800 mx-2" />
           {/* Desktop update */}
           <div className="hidden px-2 py-1.5 md:block">
             <button
-              className="group flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-blue-50/80 dark:hover:bg-blue-900/15"
+              className="group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
               onClick={onShowVersionModal}
             >
               <div className="relative flex-shrink-0">
-                <ArrowUpCircle className="h-4 w-4 text-blue-500 dark:text-blue-400" />
-                <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 animate-pulse rounded-full bg-blue-500" />
+                <ArrowUpCircle className="h-3.5 w-3.5 text-gray-600 dark:text-gray-400" />
+                <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
               </div>
               <div className="min-w-0 flex-1">
-                <span className="block truncate text-sm font-medium text-blue-600 dark:text-blue-300">
+                <span className="block truncate text-[13px] font-medium text-gray-900 dark:text-gray-100">
                   {releaseInfo?.title || `v${latestVersion}`}
                 </span>
-                <span className="text-[10px] text-blue-500/70 dark:text-blue-400/60">
+                <span className="text-[10px] text-gray-500 dark:text-gray-400">
                   {t('version.updateAvailable')}
                 </span>
               </div>
@@ -59,18 +59,18 @@ export default function SidebarFooter({
           {/* Mobile update */}
           <div className="px-3 py-2 md:hidden">
             <button
-              className="flex h-11 w-full items-center gap-3 rounded-xl border border-blue-200/60 bg-blue-50/80 px-3.5 transition-all active:scale-[0.98] dark:border-blue-700/40 dark:bg-blue-900/15"
+              className="flex h-11 w-full items-center gap-3 rounded-xl border border-gray-200 bg-gray-100 px-3.5 transition-all active:scale-[0.98] dark:border-gray-700 dark:bg-gray-800"
               onClick={onShowVersionModal}
             >
               <div className="relative flex-shrink-0">
-                <ArrowUpCircle className="w-4.5 h-4.5 text-blue-500 dark:text-blue-400" />
-                <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 animate-pulse rounded-full bg-blue-500" />
+                <ArrowUpCircle className="w-4.5 h-4.5 text-gray-600 dark:text-gray-400" />
+                <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
               </div>
               <div className="min-w-0 flex-1 text-left">
-                <span className="block truncate text-sm font-medium text-blue-600 dark:text-blue-300">
+                <span className="block truncate text-sm font-medium text-gray-700 dark:text-gray-300">
                   {releaseInfo?.title || `v${latestVersion}`}
                 </span>
-                <span className="text-xs text-blue-500/70 dark:text-blue-400/60">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
                   {t('version.updateAvailable')}
                 </span>
               </div>
@@ -80,7 +80,7 @@ export default function SidebarFooter({
       )}
 
       {/* Discord + Settings */}
-      <div className="nav-divider" />
+      <div className="h-px bg-gray-200 dark:bg-gray-800 mx-2" />
 
       {/* Desktop Discord */}
       <div className="hidden px-2 pt-1.5 md:block">
@@ -88,21 +88,21 @@ export default function SidebarFooter({
           href={DISCORD_INVITE_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground"
+          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-gray-600 dark:text-gray-400 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-200"
         >
           <DiscordIcon className="h-3.5 w-3.5" />
-          <span className="text-sm">{t('actions.joinCommunity')}</span>
+          <span className="text-[13px]">{t('actions.joinCommunity')}</span>
         </a>
       </div>
 
       {/* Desktop settings */}
       <div className="hidden px-2 py-1.5 md:block">
         <button
-          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground"
+          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-gray-600 dark:text-gray-400 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-200"
           onClick={onShowSettings}
         >
           <Settings className="h-3.5 w-3.5" />
-          <span className="text-sm">{t('actions.settings')}</span>
+          <span className="text-[13px]">{t('actions.settings')}</span>
         </button>
       </div>
 

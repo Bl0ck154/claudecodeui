@@ -1,4 +1,4 @@
-import { Settings, Sparkles, PanelLeftOpen } from 'lucide-react';
+import { Settings, ArrowUpCircle, PanelLeftOpen } from 'lucide-react';
 import type { TFunction } from 'i18next';
 
 const DISCORD_INVITE_URL = 'https://discord.gg/buxwujPNRE';
@@ -27,27 +27,27 @@ export default function SidebarCollapsed({
   t,
 }: SidebarCollapsedProps) {
   return (
-    <div className="flex h-full w-12 flex-col items-center gap-1 bg-background/80 py-3 backdrop-blur-sm">
+    <div className="flex h-full w-12 flex-col items-center gap-1 bg-white dark:bg-gray-900 py-3 border-r border-gray-200 dark:border-gray-800">
       {/* Expand button with brand logo */}
       <button
         onClick={onExpand}
-        className="group flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-accent/80"
+        className="group flex h-8 w-8 items-center justify-center rounded-md transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
         aria-label={t('common:versionUpdate.ariaLabels.showSidebar')}
         title={t('common:versionUpdate.ariaLabels.showSidebar')}
       >
-        <PanelLeftOpen className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-foreground" />
+        <PanelLeftOpen className="h-4 w-4 text-gray-500 dark:text-gray-400 transition-colors group-hover:text-gray-700 dark:group-hover:text-gray-300" />
       </button>
 
-      <div className="nav-divider my-1 w-6" />
+      <div className="my-1 w-6 h-px bg-gray-200 dark:bg-gray-800" />
 
       {/* Settings */}
       <button
         onClick={onShowSettings}
-        className="group flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-accent/80"
+        className="group flex h-8 w-8 items-center justify-center rounded-md transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
         aria-label={t('actions.settings')}
         title={t('actions.settings')}
       >
-        <Settings className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-foreground" />
+        <Settings className="h-4 w-4 text-gray-500 dark:text-gray-400 transition-colors group-hover:text-gray-700 dark:group-hover:text-gray-300" />
       </button>
 
       {/* Discord */}
@@ -55,23 +55,23 @@ export default function SidebarCollapsed({
         href={DISCORD_INVITE_URL}
         target="_blank"
         rel="noopener noreferrer"
-        className="group flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-accent/80"
+        className="group flex h-8 w-8 items-center justify-center rounded-md transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
         aria-label={t('actions.joinCommunity')}
         title={t('actions.joinCommunity')}
       >
-        <DiscordIcon className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-foreground" />
+        <DiscordIcon className="h-4 w-4 text-gray-500 dark:text-gray-400 transition-colors group-hover:text-gray-700 dark:group-hover:text-gray-300" />
       </a>
 
       {/* Update indicator */}
       {updateAvailable && (
         <button
           onClick={onShowVersionModal}
-          className="relative flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-accent/80"
+          className="relative flex h-8 w-8 items-center justify-center rounded-md transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
           aria-label={t('common:versionUpdate.ariaLabels.updateAvailable')}
           title={t('common:versionUpdate.ariaLabels.updateAvailable')}
         >
-          <Sparkles className="h-4 w-4 text-blue-500" />
-          <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 animate-pulse rounded-full bg-blue-500" />
+          <ArrowUpCircle className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+          <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
         </button>
       )}
     </div>

@@ -42,10 +42,10 @@ export const OneLineDisplay: React.FC<OneLineDisplayProps> = ({
   wrapText = false,
   colorScheme = {
     primary: 'text-gray-700 dark:text-gray-300',
-    secondary: 'text-gray-500 dark:text-gray-400',
+    secondary: 'text-gray-500 dark:text-gray-500',
     background: '',
     border: 'border-gray-300 dark:border-gray-600',
-    icon: 'text-gray-500 dark:text-gray-400'
+    icon: 'text-gray-500 dark:text-gray-500'
   },
   toolResult,
   toolId,
@@ -70,7 +70,7 @@ export const OneLineDisplay: React.FC<OneLineDisplayProps> = ({
   const renderCopyButton = () => (
     <button
       onClick={handleAction}
-      className="ml-1 flex-shrink-0 text-gray-400 opacity-0 transition-all hover:text-gray-600 group-hover:opacity-100 dark:hover:text-gray-200"
+      className="ml-1 flex-shrink-0 text-gray-500 opacity-0 transition-all hover:text-gray-600 group-hover:opacity-100 dark:hover:text-gray-200"
       title="Copy to clipboard"
       aria-label="Copy to clipboard"
     >
@@ -111,7 +111,7 @@ export const OneLineDisplay: React.FC<OneLineDisplayProps> = ({
         </div>
         {secondary && (
           <div className="ml-7 mt-1">
-            <span className="text-[11px] italic text-gray-400 dark:text-gray-500">
+            <span className="text-[11px] italic text-gray-500 dark:text-gray-500">
               {secondary}
             </span>
           </div>
@@ -125,7 +125,7 @@ export const OneLineDisplay: React.FC<OneLineDisplayProps> = ({
     const displayName = value.split('/').pop() || value;
     return (
       <div className={`group flex items-center gap-1.5 border-l-2 ${colorScheme.border} my-0.5 py-0.5 pl-3`}>
-        <span className="flex-shrink-0 text-xs text-gray-500 dark:text-gray-400">{label || toolName}</span>
+        <span className="flex-shrink-0 text-xs text-gray-500 dark:text-gray-500">{label || toolName}</span>
         <span className="text-[10px] text-gray-300 dark:text-gray-600">/</span>
         <button
           onClick={handleAction}
@@ -142,13 +142,13 @@ export const OneLineDisplay: React.FC<OneLineDisplayProps> = ({
   if (action === 'jump-to-results') {
     return (
       <div className={`group flex items-center gap-1.5 border-l-2 ${colorScheme.border} my-0.5 py-0.5 pl-3`}>
-        <span className="flex-shrink-0 text-xs text-gray-500 dark:text-gray-400">{label || toolName}</span>
+        <span className="flex-shrink-0 text-xs text-gray-500 dark:text-gray-500">{label || toolName}</span>
         <span className="text-[10px] text-gray-300 dark:text-gray-600">/</span>
         <span className={`min-w-0 flex-1 truncate font-mono text-xs ${colorScheme.primary}`}>
           {value}
         </span>
         {secondary && (
-          <span className="flex-shrink-0 text-[11px] italic text-gray-400 dark:text-gray-500">
+          <span className="flex-shrink-0 text-[11px] italic text-gray-500 dark:text-gray-500">
             {secondary}
           </span>
         )}
@@ -176,7 +176,7 @@ export const OneLineDisplay: React.FC<OneLineDisplayProps> = ({
         <span className={`${colorScheme.icon} flex-shrink-0 text-xs`}>{icon}</span>
       )}
       {!icon && (label || toolName) && (
-        <span className="flex-shrink-0 text-xs text-gray-500 dark:text-gray-400">{label || toolName}</span>
+        <span className="flex-shrink-0 text-xs text-gray-500 dark:text-gray-500">{label || toolName}</span>
       )}
       {(icon || label || toolName) && (
         <span className="text-[10px] text-gray-300 dark:text-gray-600">/</span>

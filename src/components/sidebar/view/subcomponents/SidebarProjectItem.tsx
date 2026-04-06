@@ -134,7 +134,7 @@ export default function SidebarProjectItem({
           <div
             className={cn(
               'p-3 mx-3 my-1 rounded-lg bg-card border border-border/50 active:scale-[0.98] transition-all duration-150',
-              isSelected && 'bg-primary/5 border-primary/20',
+              isSelected && 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700',
               isStarred &&
                 !isSelected &&
                 'bg-yellow-50/50 dark:bg-yellow-900/5 border-yellow-200/30 dark:border-yellow-800/30',
@@ -147,11 +147,11 @@ export default function SidebarProjectItem({
                 <div
                   className={cn(
                     'w-8 h-8 rounded-lg flex items-center justify-center transition-colors',
-                    isExpanded ? 'bg-primary/10' : 'bg-muted',
+                    isExpanded ? 'bg-gray-200 dark:bg-gray-700' : 'bg-muted',
                   )}
                 >
                   {isExpanded ? (
-                    <FolderOpen className="h-4 w-4 text-primary" />
+                    <FolderOpen className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                   ) : (
                     <Folder className="h-4 w-4 text-muted-foreground" />
                   )}
@@ -266,13 +266,13 @@ export default function SidebarProjectItem({
                     </button>
 
                     <button
-                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 active:scale-90 dark:border-primary/30 dark:bg-primary/20"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-700 active:scale-90 dark:border-gray-400 dark:border-gray-600 dark:bg-gray-300 dark:bg-gray-600"
                       onClick={(event) => {
                         event.stopPropagation();
                         onStartEditingProject(project);
                       }}
                     >
-                      <Edit3 className="h-4 w-4 text-primary" />
+                      <Edit3 className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                     </button>
 
                     <div className="flex h-6 w-6 items-center justify-center rounded-md bg-muted/30">
@@ -292,21 +292,27 @@ export default function SidebarProjectItem({
         <Button
           variant="ghost"
           className={cn(
-            'hidden md:flex w-full justify-between p-2 h-auto font-normal hover:bg-accent/50',
-            isSelected && 'bg-accent text-accent-foreground',
-            isStarred &&
-              !isSelected &&
-              'bg-yellow-50/50 dark:bg-yellow-900/10 hover:bg-yellow-100/50 dark:hover:bg-yellow-900/20',
-            hasActiveSessions && 'border-l-2 border-green-500',
+            'hidden md:flex w-full justify-between px-2.5 py-2 h-auto font-normal transition-all duration-150',
+            'hover:bg-gray-50 dark:hover:bg-gray-800/60',
+            'border-l-2 border-l-transparent',
+            'rounded-md',
+            isSelected && 'bg-gray-100 dark:bg-gray-800 border-l-gray-400 dark:border-l-gray-500',
+            isStarred && !isSelected && 'bg-gray-50/50 dark:bg-gray-900/30',
+            hasActiveSessions && 'border-l-green-500',
           )}
           onClick={selectAndToggleProject}
         >
-          <div className="flex min-w-0 flex-1 items-center gap-3">
-            {isExpanded ? (
-              <FolderOpen className="h-4 w-4 flex-shrink-0 text-primary" />
-            ) : (
-              <Folder className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
-            )}
+          <div className="flex min-w-0 flex-1 items-center gap-2.5">
+            <div className={cn(
+              "flex-shrink-0 w-7 h-7 rounded-md flex items-center justify-center transition-colors",
+              isExpanded ? "bg-gray-200 dark:bg-gray-700" : "bg-gray-100 dark:bg-gray-800"
+            )}>
+              {isExpanded ? (
+                <FolderOpen className="h-3.5 w-3.5 text-gray-600 dark:text-gray-400" />
+              ) : (
+                <Folder className="h-3.5 w-3.5 text-gray-500 dark:text-gray-500" />
+              )}
+            </div>
             <div className="min-w-0 flex-1 text-left">
               {isEditing ? (
                 <div className="space-y-1">
@@ -314,7 +320,7 @@ export default function SidebarProjectItem({
                     type="text"
                     value={editingName}
                     onChange={(event) => onEditingNameChange(event.target.value)}
-                    className="w-full rounded border border-border bg-background px-2 py-1 text-sm text-foreground focus:ring-2 focus:ring-primary/20"
+                    className="w-full rounded border border-gray-300 dark:border-gray-600 bg-background px-2 py-1 text-sm text-foreground focus:ring-1 focus:ring-gray-400 dark:focus:ring-gray-500 focus:border-gray-400 dark:focus:border-gray-500"
                     placeholder={t('projects.projectNamePlaceholder')}
                     autoFocus
                     onKeyDown={(event) => {
@@ -326,64 +332,58 @@ export default function SidebarProjectItem({
                       }
                     }}
                   />
-                  <div className="truncate text-xs text-muted-foreground" title={project.fullPath}>
+                  <div className="truncate text-xs text-gray-500 dark:text-gray-500" title={project.fullPath}>
                     {project.fullPath}
                   </div>
                 </div>
               ) : (
                 <div>
-                  <div className="flex items-center gap-2">
-                    <div className="truncate text-sm font-semibold text-foreground" title={project.displayName}>
+                  <div className="flex items-center gap-1.5">
+                    <div className="truncate text-[13px] font-medium text-gray-900 dark:text-gray-100" title={project.displayName}>
                       {project.displayName}
                     </div>
                     {hasActiveSessions && (
                       <div className="flex-shrink-0">
-                        <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
+                        <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
                       </div>
                     )}
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    {sessionCountDisplay}
-                    {project.fullPath !== project.displayName && (
-                      <span className="ml-1 opacity-60" title={project.fullPath}>
-                        {' - '}
-                        {project.fullPath.length > 25 ? `...${project.fullPath.slice(-22)}` : project.fullPath}
-                      </span>
-                    )}
+                  <div className="text-[11px] text-gray-500 dark:text-gray-500 mt-0.5 font-normal">
+                    {sessionCountDisplay} {sessions.length === 1 ? 'session' : 'sessions'}
                   </div>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="flex flex-shrink-0 items-center gap-1">
+          <div className="flex flex-shrink-0 items-center gap-0.5">
             {isEditing ? (
               <>
                 <div
-                  className="flex h-6 w-6 cursor-pointer items-center justify-center rounded text-green-600 transition-colors hover:bg-green-50 hover:text-green-700 dark:hover:bg-green-900/20"
+                  className="flex h-6 w-6 cursor-pointer items-center justify-center rounded text-green-600 transition-colors hover:bg-green-50 dark:hover:bg-green-900/20"
                   onClick={(event) => {
                     event.stopPropagation();
                     saveProjectName();
                   }}
                 >
-                  <Check className="h-3 w-3" />
+                  <Check className="h-3.5 w-3.5" />
                 </div>
                 <div
-                  className="flex h-6 w-6 cursor-pointer items-center justify-center rounded text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-700 dark:hover:bg-gray-800"
+                  className="flex h-6 w-6 cursor-pointer items-center justify-center rounded text-gray-500 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
                   onClick={(event) => {
                     event.stopPropagation();
                     onCancelEditingProject();
                   }}
                 >
-                  <X className="h-3 w-3" />
+                  <X className="h-3.5 w-3.5" />
                 </div>
               </>
             ) : (
               <>
                 <div
                   className={cn(
-                    'w-6 h-6 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center rounded cursor-pointer touch:opacity-100',
-                    isStarred ? 'hover:bg-yellow-50 dark:hover:bg-yellow-900/20 opacity-100' : 'hover:bg-accent',
+                    'w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center justify-center rounded cursor-pointer',
+                    isStarred ? 'hover:bg-gray-100 dark:hover:bg-gray-700 opacity-100' : 'hover:bg-gray-100 dark:hover:bg-gray-700',
                   )}
                   onClick={(event) => {
                     event.stopPropagation();
@@ -395,35 +395,35 @@ export default function SidebarProjectItem({
                     className={cn(
                       'w-3 h-3 transition-colors',
                       isStarred
-                        ? 'text-yellow-600 dark:text-yellow-400 fill-current'
-                        : 'text-muted-foreground',
+                        ? 'text-gray-700 dark:text-gray-300 fill-current'
+                        : 'text-gray-400 dark:text-gray-500',
                     )}
                   />
                 </div>
                 <div
-                  className="touch:opacity-100 flex h-6 w-6 cursor-pointer items-center justify-center rounded opacity-0 transition-all duration-200 hover:bg-accent group-hover:opacity-100"
+                  className="flex h-6 w-6 cursor-pointer items-center justify-center rounded opacity-0 transition-opacity duration-150 hover:bg-gray-100 dark:hover:bg-gray-700 group-hover:opacity-100"
                   onClick={(event) => {
                     event.stopPropagation();
                     onStartEditingProject(project);
                   }}
                   title={t('tooltips.renameProject')}
                 >
-                  <Edit3 className="h-3 w-3" />
+                  <Edit3 className="h-3 w-3 text-gray-500 dark:text-gray-400" />
                 </div>
                 <div
-                  className="touch:opacity-100 flex h-6 w-6 cursor-pointer items-center justify-center rounded opacity-0 transition-all duration-200 hover:bg-red-50 group-hover:opacity-100 dark:hover:bg-red-900/20"
+                  className="flex h-6 w-6 cursor-pointer items-center justify-center rounded opacity-0 transition-opacity duration-150 hover:bg-gray-100 dark:hover:bg-gray-700 group-hover:opacity-100"
                   onClick={(event) => {
                     event.stopPropagation();
                     onDeleteProject(project);
                   }}
                   title={t('tooltips.deleteProject')}
                 >
-                  <Trash2 className="h-3 w-3 text-red-600 dark:text-red-400" />
+                  <Trash2 className="h-3 w-3 text-gray-500 dark:text-gray-400" />
                 </div>
                 {isExpanded ? (
-                  <ChevronDown className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-foreground" />
+                  <ChevronDown className="h-3.5 w-3.5 text-gray-400 dark:text-gray-500 transition-colors group-hover:text-gray-600 dark:group-hover:text-gray-400" />
                 ) : (
-                  <ChevronRight className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-foreground" />
+                  <ChevronRight className="h-3.5 w-3.5 text-gray-400 dark:text-gray-500 transition-colors group-hover:text-gray-600 dark:group-hover:text-gray-400" />
                 )}
               </>
             )}

@@ -31,7 +31,7 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
           <span className="h-1.5 w-1.5 flex-shrink-0 animate-pulse rounded-full bg-blue-500 dark:bg-blue-400" />
         )}
         <svg
-          className="h-3 w-3 flex-shrink-0 text-gray-400 transition-transform duration-150 group-open/details:rotate-90 dark:text-gray-500"
+          className="h-3 w-3 flex-shrink-0 text-gray-500 transition-transform duration-150 group-open/details:rotate-90 dark:text-gray-500"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -39,7 +39,7 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
         {toolName && (
-          <span className={`flex-shrink-0 font-medium ${isExecuting ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>{toolName}</span>
+          <span className={`flex-shrink-0 font-medium ${isExecuting ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-500'}`}>{toolName}</span>
         )}
         {toolName && (
           <span className="flex-shrink-0 text-[10px] text-gray-300 dark:text-gray-600">/</span>
@@ -52,7 +52,7 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
             {title}
           </button>
         ) : (
-          <span className="flex-1 truncate text-gray-600 dark:text-gray-400">
+          <span className="flex-1 truncate text-gray-600 dark:text-gray-500">
             {title}
           </span>
         )}

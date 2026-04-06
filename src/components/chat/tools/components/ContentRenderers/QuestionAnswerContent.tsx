@@ -62,12 +62,12 @@ export const QuestionAnswerContent: React.FC<QuestionAnswerContentProps> = ({
                     </span>
                   )}
                   {total > 1 && (
-                    <span className="text-[10px] tabular-nums text-gray-400 dark:text-gray-500">
+                    <span className="text-[10px] tabular-nums text-gray-500 dark:text-gray-500">
                       {idx + 1}/{total}
                     </span>
                   )}
                 </div>
-                <div className="mt-0.5 text-xs leading-snug text-gray-600 dark:text-gray-400">
+                <div className="mt-0.5 text-xs leading-snug text-gray-600 dark:text-gray-500">
                   {q.question}
                 </div>
 
@@ -91,14 +91,14 @@ export const QuestionAnswerContent: React.FC<QuestionAnswerContentProps> = ({
                 )}
 
                 {!isExpanded && skipped && hasAnyAnswer && (
-                  <span className="mt-1 inline-block text-[10px] italic text-gray-400 dark:text-gray-500">
+                  <span className="mt-1 inline-block text-[10px] italic text-gray-500 dark:text-gray-500">
                     Skipped
                   </span>
                 )}
               </div>
 
               <svg
-                className={`mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-gray-400 transition-transform duration-200 dark:text-gray-500 ${
+                className={`mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-gray-500 transition-transform duration-200 dark:text-gray-500 ${
                   isExpanded ? 'rotate-180' : ''
                 }`}
                 fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}
@@ -118,7 +118,7 @@ export const QuestionAnswerContent: React.FC<QuestionAnswerContentProps> = ({
                         className={`flex items-start gap-2 rounded-lg px-2.5 py-1.5 text-[12px] ${
                           wasSelected
                             ? 'border border-blue-200/60 bg-blue-50/80 dark:border-blue-800/40 dark:bg-blue-900/20'
-                            : 'text-gray-400 dark:text-gray-500'
+                            : 'text-gray-500 dark:text-gray-500'
                         }`}
                       >
                         <div className={`mt-0.5 h-3.5 w-3.5 flex-shrink-0 ${q.multiSelect ? 'rounded-[3px]' : 'rounded-full'} flex items-center justify-center border-[1.5px] ${
@@ -138,7 +138,7 @@ export const QuestionAnswerContent: React.FC<QuestionAnswerContentProps> = ({
                           </span>
                           {opt.description && (
                             <span className={`mt-0.5 block text-[11px] ${
-                              wasSelected ? 'text-blue-600/70 dark:text-blue-300/70' : 'text-gray-400 dark:text-gray-600'
+                              wasSelected ? 'text-blue-600/70 dark:text-blue-300/70' : 'text-gray-500 dark:text-gray-600'
                             }`}>
                               {opt.description}
                             </span>
@@ -166,7 +166,7 @@ export const QuestionAnswerContent: React.FC<QuestionAnswerContentProps> = ({
                   ))}
 
                   {skipped && hasAnyAnswer && (
-                    <div className="px-2.5 py-1 text-[11px] italic text-gray-400 dark:text-gray-500">
+                    <div className="px-2.5 py-1 text-[11px] italic text-gray-500 dark:text-gray-500">
                       No answer provided
                     </div>
                   )}
@@ -178,7 +178,7 @@ export const QuestionAnswerContent: React.FC<QuestionAnswerContentProps> = ({
       })}
 
       {!hasAnyAnswer && total === 1 && (
-        <div className="text-[11px] italic text-gray-400 dark:text-gray-500">
+        <div className="text-[11px] italic text-gray-500 dark:text-gray-500">
           Skipped
         </div>
       )}

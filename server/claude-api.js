@@ -7,8 +7,30 @@
 
 import fetch from 'node-fetch';
 import { loadClaudeConfig } from './utils/claude-config-loader.js';
+import { promises as fs } from 'fs';
+import path from 'path';
+import os from 'os';
+import { v4 as uuidv4 } from 'uuid';
+import { getSessionMessages } from './projects.js';
 
 const activeSessions = new Map();
+
+/**
+ * Save message to .jsonl file
+ */
+async function saveMessageToFile(sessionId, projectPath, messageData) {
+  try {
+    const projectName = projectPath.replace(/[/\\:]/g, '-').replace(/^-+/, '');
+    const projectDir = path.join(os.homedir(), '.claude', 'projects', projectName);
+    await fs.mkdir(projectDir, { recursive: true });
+
+    const sessionFile = path.join(projectDir, `${sessionId}.jsonl`);
+    const line = JSON.stringify(messageData) + '\n';
+    await fs.appendFile(sessionFile, line, 'utf8');
+  } catch (error) {
+    console.error('[Claude API] Error saving message:', error);
+  }
+}
 
 /**
  * Query Claude API directly via HTTP
@@ -45,12 +67,70 @@ export async function queryClaudeAPI(command, options, writer) {
 
     // Build messages array
     const messages = [];
+
+    // Load conversation history if resuming existing session
+    if (options?.sessionId && options?.projectPath) {
+      try {
+        const projectName = options.projectPath.replace(/[/\\:]/g, '-').replace(/^-+/, '');
+        const history = await getSessionMessages(projectName, sessionId);
+
+        console.log('[Claude API] Loaded history:', history.length, 'entries');
+
+        // Convert history to API format
+        for (const entry of history) {
+          if (entry.message?.role === 'user') {
+            messages.push({
+              role: 'user',
+              content: entry.message.content
+            });
+          } else if (entry.message?.role === 'assistant') {
+            messages.push({
+              role: 'assistant',
+              content: entry.message.content
+            });
+          }
+        }
+      } catch (error) {
+        console.warn('[Claude API] Failed to load history:', error.message);
+      }
+    }
+
+    let userMessageId = null;
     if (command && command.trim()) {
       messages.push({
         role: 'user',
         content: command
       });
+
+      // Save user message
+      userMessageId = uuidv4();
+      await saveMessageToFile(sessionId, options?.projectPath || process.cwd(), {
+        type: 'user',
+        uuid: userMessageId,
+        message: {
+          role: 'user',
+          content: command
+        },
+        sessionId,
+        timestamp: new Date().toISOString(),
+        cwd: options?.projectPath || process.cwd(),
+        parentUuid: null,
+        isSidechain: false
+      });
     }
+
+    // Validate messages array is not empty
+    if (messages.length === 0) {
+      console.warn('[Claude API] No messages to send');
+      writer.send({
+        kind: 'complete',
+        sessionId,
+        timestamp: new Date().toISOString()
+      });
+      return;
+    }
+
+    console.log('[Claude API] Sending', messages.length, 'messages to API');
 
     // Make API request
     const response = await fetch(`${apiUrl}/messages`, {
@@ -88,11 +168,13 @@ export async function queryClaudeAPI(command, options, writer) {
     // Stream response using async iterator (Node.js native)
     let buffer = '';
     let hasReceivedData = false;
+    let accumulatedText = '';
+    const decoder = new TextDecoder('utf-8');
 
     try {
       for await (const chunk of response.body) {
         hasReceivedData = true;
-        const chunkStr = chunk.toString();
+        const chunkStr = decoder.decode(chunk, { stream: true });
         console.log('[Claude API] Received chunk:', chunkStr.substring(0, 200));
 
         buffer += chunkStr;
@@ -116,6 +198,7 @@ export async function queryClaudeAPI(command, options, writer) {
             // Send to client
             if (event.type === 'content_block_delta' && event.delta?.text) {
               console.log('[Claude API] Sending text:', event.delta.text);
+              accumulatedText += event.delta.text;
               writer.send({
                 kind: 'stream_delta',
                 content: event.delta.text,
@@ -130,6 +213,35 @@ export async function queryClaudeAPI(command, options, writer) {
                 sessionId,
                 timestamp: new Date().toISOString()
               });
+
+              // Save assistant message
+              if (accumulatedText) {
+                const assistantMessageId = uuidv4();
+                await saveMessageToFile(sessionId, options?.projectPath || process.cwd(), {
+                  type: 'assistant',
+                  uuid: assistantMessageId,
+                  message: {
+                    role: 'assistant',
+                    content: [{
+                      type: 'text',
+                      text: accumulatedText
+                    }],
+                    id: assistantMessageId,
+                    model: model,
+                    stop_reason: 'end_turn',
+                    type: 'message',
+                    usage: {
+                      input_tokens: 0,
+                      output_tokens: 0
+                    }
+                  },
+                  sessionId,
+                  timestamp: new Date().toISOString(),
+                  cwd: options?.projectPath || process.cwd(),
+                  parentUuid: userMessageId,
+                  isSidechain: false
+                });
+              }
 
               writer.send({
                 kind: 'complete',

@@ -7,6 +7,7 @@ import { getIntrinsicMessageKey } from '../../utils/messageKeys';
 import MessageComponent from './MessageComponent';
 import ProviderSelectionEmptyState from './ProviderSelectionEmptyState';
 import AssistantThinkingIndicator from './AssistantThinkingIndicator';
+import ClaudeStatus from './ClaudeStatus';
 
 interface ChatMessagesPaneProps {
   scrollContainerRef: RefObject<HTMLDivElement>;
@@ -52,6 +53,8 @@ interface ChatMessagesPaneProps {
   showThinking?: boolean;
   selectedProject: Project;
   isLoading: boolean;
+  claudeStatus: { text: string; tokens: number; can_interrupt: boolean } | null;
+  onAbortSession: () => void;
 }
 
 export default function ChatMessagesPane({
@@ -98,6 +101,8 @@ export default function ChatMessagesPane({
   showThinking,
   selectedProject,
   isLoading,
+  claudeStatus,
+  onAbortSession,
 }: ChatMessagesPaneProps) {
   const { t } = useTranslation('chat');
   const messageKeyMapRef = useRef<WeakMap<ChatMessage, string>>(new WeakMap());
@@ -135,8 +140,9 @@ export default function ChatMessagesPane({
       onTouchMove={onTouchMove}
       className="relative flex-1 space-y-6 overflow-y-auto overflow-x-hidden py-6"
     >
+      <div className="mx-auto max-w-3xl px-4">
       {isLoadingSessionMessages && chatMessages.length === 0 ? (
-        <div className="mt-8 text-center text-gray-500 dark:text-gray-400">
+        <div className="mt-8 text-center text-gray-500 dark:text-gray-500">
           <div className="flex items-center justify-center space-x-2">
             <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-gray-400" />
             <p>{t('session.loading.sessionMessages')}</p>
@@ -166,7 +172,7 @@ export default function ChatMessagesPane({
         <>
           {/* Loading indicator for older messages (hide when load-all is active) */}
           {isLoadingMoreMessages && !isLoadingAllMessages && !allMessagesLoaded && (
-            <div className="py-3 text-center text-gray-500 dark:text-gray-400">
+            <div className="py-3 text-center text-gray-500 dark:text-gray-500">
               <div className="flex items-center justify-center space-x-2">
                 <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-gray-400" />
                 <p className="text-sm">{t('session.loading.olderMessages')}</p>
@@ -176,7 +182,7 @@ export default function ChatMessagesPane({
 
           {/* Indicator showing there are more messages to load (hide when all loaded) */}
           {hasMoreMessages && !isLoadingMoreMessages && !allMessagesLoaded && (
-            <div className="border-b border-gray-200 py-2 text-center text-sm text-gray-500 dark:border-gray-700 dark:text-gray-400">
+            <div className="border-b border-gray-200 py-2 text-center text-sm text-gray-500 dark:border-gray-700 dark:text-gray-500">
               {totalMessages > 0 && (
                 <span>
                   {t('session.messages.showingOf', { shown: sessionMessagesCount, total: totalMessages })}{' '}
@@ -225,7 +231,7 @@ export default function ChatMessagesPane({
 
           {/* Legacy message count indicator (for non-paginated view) */}
           {!hasMoreMessages && chatMessages.length > visibleMessageCount && (
-            <div className="border-b border-gray-200 py-2 text-center text-sm text-gray-500 dark:border-gray-700 dark:text-gray-400">
+            <div className="border-b border-gray-200 py-2 text-center text-sm text-gray-500 dark:border-gray-700 dark:text-gray-500">
               {t('session.messages.showingLast', { count: visibleMessageCount, total: chatMessages.length })} |
               <button className="ml-1 text-blue-600 underline hover:text-blue-700" onClick={loadEarlierMessages}>
                 {t('session.messages.loadEarlier')}
@@ -259,10 +265,17 @@ export default function ChatMessagesPane({
               />
             );
           })}
+
+          {/* ClaudeStatus appears inline with messages */}
+          <ClaudeStatus
+            status={claudeStatus}
+            isLoading={isLoading}
+            onAbort={onAbortSession}
+            provider={provider}
+          />
         </>
       )}
-
-      {isLoading && <AssistantThinkingIndicator selectedProvider={provider} />}
+      </div>
     </div>
   );
 }

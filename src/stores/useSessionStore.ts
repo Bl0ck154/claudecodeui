@@ -326,8 +326,36 @@ export function useSessionStore() {
       slot.total = data.total ?? slot.serverMessages.length;
       slot.hasMore = Boolean(data.hasMore);
       slot.fetchedAt = Date.now();
-      // drop realtime messages that the server has caught up with to prevent unbounded growth.
-      slot.realtimeMessages = [];
+      // Only drop realtime messages that the server has actually caught up with
+      // Match by ID, content similarity, and role+content for user messages
+      const serverIds = new Set(slot.serverMessages.map(m => m.id));
+      const serverContents = new Set(
+        slot.serverMessages
+          .filter(m => m.kind === 'text' && m.content)
+          .map(m => m.content?.trim())
+      );
+      // Build a set of user message signatures (role + content) for deduplication
+      const serverUserMessages = new Set(
+        slot.serverMessages
+          .filter(m => m.kind === 'text' && m.role === 'user' && m.content)
+          .map(m => `user:${m.content?.trim()}`)
+      );
+      slot.realtimeMessages = slot.realtimeMessages.filter(m => {
+        // Keep if server doesn't have this exact ID
+        if (serverIds.has(m.id)) return false;
+        // Keep streaming messages (they're still in progress)
+        if (m.id.startsWith('__streaming_')) return true;
+        // Drop user messages if server has same role+content (handles local_* IDs)
+        if (m.kind === 'text' && m.role === 'user' && m.content) {
+          const signature = `user:${m.content.trim()}`;
+          if (serverUserMessages.has(signature)) return false;
+        }
+        // Drop finalized text messages if server has same content
+        if (m.kind === 'text' && m.content && serverContents.has(m.content.trim())) {
+          return false;
+        }
+        return true;
+      });
       recomputeMergedIfNeeded(slot);
       notify(sessionId);
     } catch (error) {

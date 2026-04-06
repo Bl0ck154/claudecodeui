@@ -50,6 +50,9 @@ export function normalizedToChatMessages(messages: NormalizedMessage[]): ChatMes
           let text = decodeHtmlEntities(content);
           text = unescapeWithMathProtection(text);
           text = formatUsageLimitText(text);
+          // Remove agent name and timestamp from responses
+          text = text.replace(/^[A-Z][a-z]+\s*\*\*.*?\*\*\.?\s*/i, '');
+          text = text.replace(/^Claude[\s\n]+/i, '');
           converted.push({
             type: 'assistant',
             content: text,
@@ -108,9 +111,13 @@ export function normalizedToChatMessages(messages: NormalizedMessage[]): ChatMes
 
       case 'thinking':
         if (msg.content?.trim()) {
+          let text = unescapeWithMathProtection(msg.content);
+          // Remove agent name and timestamp from thinking blocks
+          text = text.replace(/^[A-Z][a-z]+\s*\*\*.*?\*\*\.?\s*/i, '');
+          text = text.replace(/^Claude[\s\n]+/i, '');
           converted.push({
             type: 'assistant',
-            content: unescapeWithMathProtection(msg.content),
+            content: text,
             timestamp: msg.timestamp,
             isThinking: true,
           });
@@ -118,17 +125,25 @@ export function normalizedToChatMessages(messages: NormalizedMessage[]): ChatMes
         break;
 
       case 'error':
+        let errorText = msg.content || 'Unknown error';
+        // Remove agent name and timestamp from error messages
+        errorText = errorText.replace(/^[A-Z][a-z]+\s*\*\*.*?\*\*\.?\s*/i, '');
+        errorText = errorText.replace(/^Claude[\s\n]+/i, '');
         converted.push({
           type: 'error',
-          content: msg.content || 'Unknown error',
+          content: errorText,
           timestamp: msg.timestamp,
         });
         break;
 
       case 'interactive_prompt':
+        let promptText = msg.content || '';
+        // Remove agent name and timestamp from interactive prompts
+        promptText = promptText.replace(/^[A-Z][a-z]+\s*\*\*.*?\*\*\.?\s*/i, '');
+        promptText = promptText.replace(/^Claude[\s\n]+/i, '');
         converted.push({
           type: 'assistant',
-          content: msg.content || '',
+          content: promptText,
           timestamp: msg.timestamp,
           isInteractivePrompt: true,
         });
@@ -146,9 +161,13 @@ export function normalizedToChatMessages(messages: NormalizedMessage[]): ChatMes
 
       case 'stream_delta':
         if (msg.content) {
+          let streamText = msg.content;
+          // Remove agent name and timestamp from streaming content
+          streamText = streamText.replace(/^[A-Z][a-z]+\s*\*\*.*?\*\*\.?\s*/i, '');
+          streamText = streamText.replace(/^Claude[\s\n]+/i, '');
           converted.push({
             type: 'assistant',
-            content: msg.content,
+            content: streamText,
             timestamp: msg.timestamp,
             isStreaming: true,
           });

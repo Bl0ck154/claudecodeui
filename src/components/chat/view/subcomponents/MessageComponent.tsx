@@ -104,6 +104,13 @@ const MessageComponent = memo(({ message, prevMessage, createDiff, onFileOpen, o
   const formattedTime = useMemo(() => new Date(message.timestamp).toLocaleTimeString(), [message.timestamp]);
   const shouldHideThinkingMessage = Boolean(message.isThinking && !showThinking);
 
+  // Validate image URLs to prevent XSS
+  const isSafeImageUrl = (url: string): boolean => {
+    return url.startsWith('data:image/') ||
+           url.startsWith('blob:') ||
+           /^https?:\/\//.test(url);
+  };
+
   if (shouldHideThinkingMessage) {
     return null;
   }
@@ -115,48 +122,45 @@ const MessageComponent = memo(({ message, prevMessage, createDiff, onFileOpen, o
       className={`chat-message ${message.type} ${isGrouped ? 'grouped' : ''} px-4`}
     >
       {message.type === 'user' ? (
-        /* User message bubble on the right */
+        /* User message bubble on the right - Claude.ai style: minimal, clean white */
         <div className="flex w-full items-start justify-end space-x-3">
-          <div className="group max-w-2xl rounded-2xl bg-blue-500 px-4 py-3 shadow-sm">
-            <div className="whitespace-pre-wrap break-words text-sm text-white">
+          <div className="group max-w-2xl rounded-2xl bg-white dark:bg-gray-900 border border-gray-200/60 dark:border-gray-700/60 px-4 py-3 shadow-sm">
+            <div className="whitespace-pre-wrap break-words text-sm text-gray-900 dark:text-gray-100">
               {message.content}
             </div>
             {message.images && message.images.length > 0 && (
               <div className="mt-2 grid grid-cols-2 gap-2">
                 {message.images.map((img, idx) => (
-                  <img
-                    key={img.name || idx}
-                    src={img.data}
-                    alt={img.name}
-                    className="h-auto max-w-full cursor-pointer rounded-lg transition-opacity hover:opacity-90"
-                    onClick={() => window.open(img.data, '_blank')}
-                  />
+                  isSafeImageUrl(img.data) && (
+                    <img
+                      key={img.name || idx}
+                      src={img.data}
+                      alt={img.name}
+                      className="h-auto max-w-full cursor-pointer rounded-lg transition-opacity hover:opacity-90"
+                      onClick={() => window.open(img.data, '_blank')}
+                    />
+                  )
                 ))}
               </div>
             )}
-            <div className="mt-1 flex items-center justify-end gap-1 text-xs text-blue-100">
+            <div className="mt-1 flex items-center justify-end gap-2 text-xs text-gray-500 dark:text-gray-500">
               {shouldShowUserCopyControl && (
                 <MessageCopyControl content={userCopyContent} messageType="user" />
               )}
               <span>{formattedTime}</span>
             </div>
           </div>
-          {!isGrouped && (
-            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-500 text-sm font-medium text-white">
-              U
-            </div>
-          )}
         </div>
       ) : message.isTaskNotification ? (
         /* Compact task notification on the left */
         <div className="w-full">
           <div className="flex items-center gap-2 py-0.5">
             <span className={`inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full ${message.taskStatus === 'completed' ? 'bg-green-400 dark:bg-green-500' : 'bg-amber-400 dark:bg-amber-500'}`} />
-            <span className="text-xs text-gray-500 dark:text-gray-400">{message.content}</span>
+            <span className="text-xs text-gray-500 dark:text-gray-500">{message.content}</span>
           </div>
         </div>
       ) : (
-        /* Claude/Error/Tool messages on the left */
+        /* Claude/Error/Tool messages on the left - Claude.ai style: subtle beige/cream background */
         <div className="flex w-full items-start space-x-3">
           {!isGrouped && (
             message.type === 'error' ? (
@@ -168,19 +172,13 @@ const MessageComponent = memo(({ message, prevMessage, createDiff, onFileOpen, o
                 🔧
               </div>
             ) : (
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 p-1.5">
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-900/20 p-1.5">
                 <SessionProviderLogo provider={provider} className="h-full w-full" />
               </div>
             )
           )}
 
-          <div className="max-w-2xl flex-1">
-            {!isGrouped && (
-              <div className="mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                {message.type === 'error' ? t('messageTypes.error') : message.type === 'tool' ? t('messageTypes.tool') : (provider === 'cursor' ? t('messageTypes.cursor') : provider === 'codex' ? t('messageTypes.codex') : provider === 'gemini' ? t('messageTypes.gemini') : t('messageTypes.claude'))}
-              </div>
-            )}
-
+          <div className="max-w-2xl flex-1 rounded-2xl bg-gray-100 dark:bg-gray-800 border border-gray-200/60 dark:border-gray-700/60 px-4 py-3 shadow-sm">
             {message.isToolUse ? (
               <>
                 <div className="flex flex-col">
@@ -402,10 +400,10 @@ const MessageComponent = memo(({ message, prevMessage, createDiff, onFileOpen, o
                 {/* Thinking accordion for reasoning */}
                 {showThinking && message.reasoning && (
                   <details className="mb-3">
-                    <summary className="cursor-pointer font-medium text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200">
+                    <summary className="cursor-pointer font-medium text-gray-600 hover:text-gray-800 dark:text-gray-500 dark:hover:text-gray-200">
                       {t('thinking.emoji')}
                     </summary>
-                    <div className="mt-2 border-l-2 border-gray-300 pl-4 text-sm italic text-gray-600 dark:border-gray-600 dark:text-gray-400">
+                    <div className="mt-2 border-l-2 border-gray-300 pl-4 text-sm italic text-gray-600 dark:border-gray-600 dark:text-gray-500">
                       <div className="whitespace-pre-wrap">
                         {message.reasoning}
                       </div>
@@ -426,7 +424,7 @@ const MessageComponent = memo(({ message, prevMessage, createDiff, onFileOpen, o
 
                       return (
                         <div className="my-2">
-                          <div className="mb-2 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                          <div className="mb-2 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-500">
                             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                             </svg>
@@ -461,7 +459,7 @@ const MessageComponent = memo(({ message, prevMessage, createDiff, onFileOpen, o
             )}
 
             {(shouldShowAssistantCopyControl || !isGrouped) && (
-              <div className="mt-1 flex w-full items-center gap-2 text-[11px] text-gray-400 dark:text-gray-500">
+              <div className="mt-1 flex w-full items-center gap-2 text-[11px] text-gray-500 dark:text-gray-500">
                 {shouldShowAssistantCopyControl && (
                   <MessageCopyControl content={assistantCopyContent} messageType="assistant" />
                 )}

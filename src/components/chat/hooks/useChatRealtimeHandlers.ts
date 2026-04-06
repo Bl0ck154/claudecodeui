@@ -240,6 +240,11 @@ export function useChatRealtimeHandlers({
           );
         }
         onNavigateToSession?.(newSessionId);
+
+        // Refresh project list to show new session
+        if (window.refreshProjects) {
+          setTimeout(() => window.refreshProjects?.(), 1000);
+        }
         break;
       }
 
@@ -281,7 +286,7 @@ export function useChatRealtimeHandlers({
           }
           sessionStorage.removeItem('pendingSessionId');
           if (window.refreshProjects) {
-            setTimeout(() => window.refreshProjects?.(), 500);
+            setTimeout(() => window.refreshProjects?.(), 1500);
           }
         }
         break;
@@ -366,4 +371,14 @@ export function useChatRealtimeHandlers({
     onWebSocketReconnect,
     sessionStore,
   ]);
+
+  // Cleanup stream timer on unmount
+  useEffect(() => {
+    return () => {
+      if (streamTimerRef.current) {
+        clearTimeout(streamTimerRef.current);
+        streamTimerRef.current = null;
+      }
+    };
+  }, []);
 }

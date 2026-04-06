@@ -102,7 +102,7 @@ export default function PermissionRequestsBanner({
                 className={`inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${
                   permissionEntry
                     ? 'border-amber-300 text-amber-800 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-100 dark:hover:bg-amber-900/30'
-                    : 'cursor-not-allowed border-gray-300 text-gray-400'
+                    : 'cursor-not-allowed border-gray-300 text-gray-500'
                 }`}
                 disabled={!permissionEntry}
               >

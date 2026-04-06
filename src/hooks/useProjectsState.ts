@@ -244,7 +244,10 @@ export function useProjectsState({
           const isSessionActive = activeSessions.has(selectedSession.id);
 
           if (!isSessionActive) {
-            setExternalMessageUpdate((prev) => prev + 1);
+            // Add delay to allow server to finish saving messages before refreshing
+            setTimeout(() => {
+              setExternalMessageUpdate((prev) => prev + 1);
+            }, 1000);
           }
         }
       }

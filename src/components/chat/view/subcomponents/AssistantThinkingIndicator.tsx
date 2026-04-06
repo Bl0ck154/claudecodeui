@@ -18,7 +18,7 @@ export default function AssistantThinkingIndicator({ selectedProvider }: Assista
             {selectedProvider === 'cursor' ? 'Cursor' : selectedProvider === 'codex' ? 'Codex' : selectedProvider === 'gemini' ? 'Gemini' : 'Claude'}
           </div>
         </div>
-        <div className="w-full pl-3 text-sm text-gray-500 dark:text-gray-400 sm:pl-0">
+        <div className="w-full pl-3 text-sm text-gray-500 dark:text-gray-500 sm:pl-0">
           <div className="flex items-center space-x-0.5">
             <span className="inline-block animate-bounce" style={{ animationDuration: '1.4s', animationDelay: '0s' }}>.</span>
             <span className="inline-block animate-bounce" style={{ animationDuration: '1.4s', animationDelay: '0.2s' }}>.</span>

@@ -33,7 +33,7 @@ const STATUS_CONFIG: Record<TodoStatus, StatusConfig> = {
     iconClassName: 'w-3.5 h-3.5 text-green-500 dark:text-green-400',
     badgeClassName:
       'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 border-green-200 dark:border-green-800',
-    textClassName: 'line-through text-gray-500 dark:text-gray-400',
+    textClassName: 'line-through text-gray-500 dark:text-gray-500',
   },
   in_progress: {
     icon: Clock,
@@ -44,9 +44,9 @@ const STATUS_CONFIG: Record<TodoStatus, StatusConfig> = {
   },
   pending: {
     icon: Circle,
-    iconClassName: 'w-3.5 h-3.5 text-gray-400 dark:text-gray-500',
+    iconClassName: 'w-3.5 h-3.5 text-gray-500 dark:text-gray-500',
     badgeClassName:
-      'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700',
+      'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-500 border-gray-200 dark:border-gray-700',
     textClassName: 'text-gray-900 dark:text-gray-100',
   },
 };
@@ -55,7 +55,7 @@ const PRIORITY_BADGE_CLASS: Record<TodoPriority, string> = {
   high: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800',
   medium:
     'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800',
-  low: 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700',
+  low: 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-500 border-gray-200 dark:border-gray-700',
 };
 
 // Incoming tool payloads can vary; normalize to supported UI states.
@@ -136,7 +136,7 @@ const TodoList = memo(
     return (
       <div className="space-y-1.5">
         {isResult && (
-          <div className="mb-1.5 text-xs font-medium text-gray-600 dark:text-gray-400">
+          <div className="mb-1.5 text-xs font-medium text-gray-600 dark:text-gray-500">
             Todo List ({normalizedTodos.length}{' '}
             {normalizedTodos.length === 1 ? 'item' : 'items'})
           </div>

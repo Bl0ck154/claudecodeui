@@ -113,6 +113,7 @@
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
     "tailwind-merge": "^3.3.1",
+    "uuid": "^13.0.0",
     "web-push": "^3.6.7",
     "ws": "^8.14.2"
   },
@@ -120,6 +121,7 @@
     "@commitlint/cli": "^20.4.3",
     "@commitlint/config-conventional": "^20.4.3",
     "@eslint/js": "^9.39.3",
+    "@playwright/test": "^1.59.1",
     "@release-it/conventional-changelog": "^10.0.5",
     "@types/node": "^22.19.7",
     "@types/react": "^18.2.43",

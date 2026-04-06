@@ -14,7 +14,6 @@ import type {
 import MicButton from '../../../mic-button/view/MicButton';
 import type { PendingPermissionRequest, PermissionMode, Provider } from '../../types/types';
 import CommandMenu from './CommandMenu';
-import ClaudeStatus from './ClaudeStatus';
 import ImageAttachment from './ImageAttachment';
 import PermissionRequestsBanner from './PermissionRequestsBanner';
 import ChatInputControls from './ChatInputControls';
@@ -41,9 +40,6 @@ interface ChatComposerProps {
     decision: { allow?: boolean; message?: string; rememberEntry?: string | null; updatedInput?: unknown },
   ) => void;
   handleGrantToolPermission: (suggestion: { entry: string; toolName: string }) => { success: boolean };
-  claudeStatus: { text: string; tokens: number; can_interrupt: boolean } | null;
-  isLoading: boolean;
-  onAbortSession: () => void;
   provider: Provider | string;
   permissionMode: PermissionMode | string;
   onModeSwitch: () => void;
@@ -97,9 +93,6 @@ export default function ChatComposer({
   pendingPermissionRequests,
   handlePermissionDecision,
   handleGrantToolPermission,
-  claudeStatus,
-  isLoading,
-  onAbortSession,
   provider,
   permissionMode,
   onModeSwitch,
@@ -168,17 +161,6 @@ export default function ChatComposer({
 
   return (
     <div className={`flex-shrink-0 p-2 pb-2 sm:p-4 sm:pb-4 md:p-4 md:pb-6 ${mobileFloatingClass}`}>
-      {!hasQuestionPanel && (
-        <div className="flex-1">
-          <ClaudeStatus
-            status={claudeStatus}
-            isLoading={isLoading}
-            onAbort={onAbortSession}
-            provider={provider}
-          />
-        </div>
-      )}
-
       <div className="mx-auto mb-3 max-w-3xl px-4">
         <PermissionRequestsBanner
           pendingPermissionRequests={pendingPermissionRequests}
@@ -259,18 +241,18 @@ export default function ChatComposer({
 
         <div
           {...getRootProps()}
-          className={`relative overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all duration-200 focus-within:border-primary/50 focus-within:shadow-md focus-within:ring-2 focus-within:ring-primary/10 ${
+          className={`relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm transition-all duration-200 focus-within:border-gray-400 dark:focus-within:border-gray-500 focus-within:shadow-md ${
             isTextareaExpanded ? 'chat-input-expanded' : ''
           }`}
         >
           <input {...getInputProps()} />
           <div ref={inputHighlightRef} aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl">
-            <div className="chat-input-placeholder block w-full whitespace-pre-wrap break-words py-3 pr-14 text-base leading-6 text-transparent sm:py-3 sm:pr-14" style={{ paddingLeft: '3.5rem' }}>
+            <div className="chat-input-placeholder block w-full whitespace-pre-wrap break-words py-3 pl-3 pr-3 pb-12 text-base leading-6 text-transparent sm:py-3 sm:pl-3 sm:pr-3 sm:pb-12">
               {renderInputWithMentions(input)}
             </div>
           </div>
 
-          <div className="relative z-10">
+          <div className="relative">
             <textarea
               ref={textareaRef}
               value={input}
@@ -283,44 +265,44 @@ export default function ChatComposer({
               onBlur={() => onInputFocusChange?.(false)}
               onInput={onTextareaInput}
               placeholder={placeholder}
-              className="chat-input-placeholder block max-h-[40vh] min-h-[48px] w-full resize-none overflow-y-auto rounded-xl bg-transparent py-3 pl-40 pr-14 text-base leading-6 text-foreground placeholder-muted-foreground/60 transition-all duration-200 focus:outline-none sm:max-h-[300px] sm:min-h-[48px] sm:py-3 sm:pr-14"
+              className="chat-input-placeholder block max-h-[40vh] min-h-[48px] w-full resize-none overflow-y-auto bg-transparent py-3 pl-3 pr-3 pb-12 text-base leading-6 text-foreground placeholder-muted-foreground/60 transition-all duration-200 focus:outline-none sm:max-h-[300px] sm:min-h-[48px] sm:py-3 sm:pr-3 sm:pb-12"
               style={{ height: '48px' }}
             />
 
-            <button
-              type="button"
-              onClick={openImagePicker}
-              className="absolute bottom-2 left-2 rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              title={t('input.attachImages')}
-            >
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
-            </button>
+            {/* Bottom toolbar panel */}
+            <div className="absolute bottom-0 left-0 right-0 h-10 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 flex items-center justify-between px-2">
+              {/* Left side icons */}
+              <div className="flex items-center gap-1">
+              {/* Image upload button */}
+              <button
+                type="button"
+                onClick={openImagePicker}
+                className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                title={t('input.attachImages')}
+                aria-label={t('input.attachImages')}
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              </button>
 
-            {/* Control buttons - positioned at bottom-left with more space */}
-            <div className="absolute bottom-2 left-12 flex items-center gap-1">
               {/* Permission Mode Button */}
               <button
                 type="button"
                 onClick={onModeSwitch}
-                className={`rounded-lg p-2 transition-all duration-200 ${
+                className={`flex flex-col items-center gap-0.5 rounded-lg p-1.5 transition-all duration-200 ${
                   permissionMode === 'default'
                     ? 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                    : permissionMode === 'acceptEdits'
-                      ? 'bg-green-100 text-green-600 hover:bg-green-200 dark:bg-green-900/25 dark:text-green-400 dark:hover:bg-green-900/40'
-                      : permissionMode === 'bypassPermissions'
-                        ? 'bg-orange-100 text-orange-600 hover:bg-orange-200 dark:bg-orange-900/25 dark:text-orange-400 dark:hover:bg-orange-900/40'
-                        : 'bg-primary/10 text-primary hover:bg-primary/20'
+                    : 'bg-muted text-foreground hover:bg-muted/80'
                 }`}
                 title={t('input.clickToChangeMode')}
               >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -328,6 +310,11 @@ export default function ChatComposer({
                     d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                   />
                 </svg>
+                <span className="text-[9px] leading-none">
+                  {permissionMode === 'default' ? 'Auto' :
+                   permissionMode === 'acceptEdits' ? 'Accept' :
+                   permissionMode === 'bypassPermissions' ? 'Bypass' : 'Plan'}
+                </span>
               </button>
 
               {/* Thinking Mode Button */}
@@ -340,16 +327,14 @@ export default function ChatComposer({
                     const nextMode = modes[(currentIndex + 1) % modes.length];
                     setThinkingMode(nextMode);
                   }}
-                  className={`rounded-lg p-2 transition-all duration-200 ${
+                  className={`flex flex-col items-center gap-0.5 rounded-lg p-1.5 transition-all duration-200 ${
                     thinkingMode === 'default'
                       ? 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                      : thinkingMode === 'extended'
-                        ? 'bg-blue-100 text-blue-600 hover:bg-blue-200 dark:bg-blue-900/25 dark:text-blue-400 dark:hover:bg-blue-900/40'
-                        : 'bg-purple-100 text-purple-600 hover:bg-purple-200 dark:bg-purple-900/25 dark:text-purple-400 dark:hover:bg-purple-900/40'
+                      : 'bg-muted text-foreground hover:bg-muted/80'
                   }`}
                   title={`Thinking mode: ${thinkingMode}`}
                 >
-                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -357,6 +342,7 @@ export default function ChatComposer({
                       d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
                     />
                   </svg>
+                  <span className="text-[9px] leading-none capitalize">{thinkingMode}</span>
                 </button>
               )}
 
@@ -364,10 +350,10 @@ export default function ChatComposer({
               <button
                 type="button"
                 onClick={onToggleCommandMenu}
-                className="relative rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="relative rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 title={t('input.showAllCommands')}
               >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -383,30 +369,20 @@ export default function ChatComposer({
               </button>
             </div>
 
-            <div className="absolute right-16 top-1/2 -translate-y-1/2 transform sm:right-16" style={{ display: 'none' }}>
-              <MicButton onTranscript={onTranscript} className="h-10 w-10 sm:h-10 sm:w-10" />
-            </div>
-
-            <button
-              type="button"
-              disabled={!input.trim()}
-              onClick={(event) => {
-                event.preventDefault();
-                onSubmit(event);
-              }}
-              className="absolute right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 transform items-center justify-center rounded-lg bg-primary transition-all duration-200 hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-1 focus:ring-offset-background disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground sm:h-10 sm:w-10"
-            >
-              <svg className="h-5 w-5 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-              </svg>
-            </button>
-
-            <div
-              className={`pointer-events-none absolute bottom-3 left-14 right-14 hidden text-xs text-muted-foreground/50 transition-opacity duration-200 sm:block ${
-                input.trim() ? 'opacity-0' : 'opacity-100'
-              }`}
-            >
-              {sendByCtrlEnter ? t('input.hintText.ctrlEnter') : t('input.hintText.enter')}
+              {/* Right side - send button */}
+              <button
+                type="button"
+                disabled={!input.trim()}
+                onClick={(event) => {
+                  event.preventDefault();
+                  onSubmit(event);
+                }}
+                className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-900 dark:bg-gray-100 transition-all duration-200 hover:bg-gray-800 dark:hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400/30 disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground"
+              >
+                <svg className="h-4 w-4 text-white dark:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                </svg>
+              </button>
             </div>
           </div>
         </div>
