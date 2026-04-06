@@ -100,8 +100,8 @@ export default function SidebarProjectItem({
   const sessionCountLabel = `${sessionCountDisplay} session${sessions.length === 1 ? '' : 's'}`;
   const taskStatus = getTaskIndicatorStatus(project, mcpServerStatus);
 
-  // Check if project has active sessions (not currently selected)
-  const hasActiveSessions = !isSelected && sessions.some((session) => {
+  // Check if project has active sessions
+  const hasActiveSessions = sessions.some((session) => {
     const sessionView = createSessionViewModel(session, currentTime, t);
     return sessionView.isActive;
   });
