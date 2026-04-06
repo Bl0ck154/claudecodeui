@@ -60,6 +60,11 @@ export function normalizedToChatMessages(messages: NormalizedMessage[]): ChatMes
             continue;
           }
 
+          // Skip system messages like "Compacting conversation…"
+          if (/^[*\s]*Compacting conversation/i.test(trimmedText)) {
+            continue;
+          }
+
           converted.push({
             type: 'assistant',
             content: text,
