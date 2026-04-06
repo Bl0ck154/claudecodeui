@@ -123,7 +123,7 @@ const MessageComponent = memo(({ message, prevMessage, createDiff, onFileOpen, o
     >
       {message.type === 'user' ? (
         /* User message bubble on the right - Claude.ai style: minimal, clean white */
-        <div className="flex w-full items-start justify-end space-x-3 pl-[25%]">
+        <div className="flex w-full items-start justify-end space-x-3 pl-[21%] pr-[4%]">
           <div className="group max-w-full rounded-2xl bg-white dark:bg-gray-900 border border-gray-200/60 dark:border-gray-700/60 px-4 py-3 shadow-sm">
             <div className="whitespace-pre-wrap break-words text-sm text-gray-900 dark:text-gray-100">
               {message.content}
@@ -161,7 +161,7 @@ const MessageComponent = memo(({ message, prevMessage, createDiff, onFileOpen, o
         </div>
       ) : (
         /* Claude/Error/Tool messages on the left - Claude.ai style: subtle beige/cream background */
-        <div className="flex w-full items-start space-x-3 -ml-[8%]">
+        <div className="flex w-full items-start space-x-3 -ml-[4%]">
           <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center">
             {!isGrouped && (
               message.type === 'error' ? (

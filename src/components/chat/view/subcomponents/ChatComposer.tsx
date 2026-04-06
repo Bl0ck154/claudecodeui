@@ -160,7 +160,7 @@ export default function ChatComposer({
     : '';
 
   return (
-    <div className={`flex-shrink-0 p-2 pb-2 sm:p-4 sm:pb-4 md:p-4 md:pb-6 ${mobileFloatingClass}`}>
+    <div className={`flex-shrink-0 ${mobileFloatingClass}`}>
       <div className="mx-auto mb-3 max-w-3xl px-4">
         <PermissionRequestsBanner
           pendingPermissionRequests={pendingPermissionRequests}
