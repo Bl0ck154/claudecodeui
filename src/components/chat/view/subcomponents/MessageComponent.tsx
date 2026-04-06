@@ -123,7 +123,7 @@ const MessageComponent = memo(({ message, prevMessage, createDiff, onFileOpen, o
     >
       {message.type === 'user' ? (
         /* User message bubble on the right - Claude.ai style: minimal, clean white */
-        <div className="flex w-full items-start justify-end space-x-3">
+        <div className="flex w-full items-start justify-end space-x-3 ml-[25%]">
           <div className="group max-w-2xl rounded-2xl bg-white dark:bg-gray-900 border border-gray-200/60 dark:border-gray-700/60 px-4 py-3 shadow-sm">
             <div className="whitespace-pre-wrap break-words text-sm text-gray-900 dark:text-gray-100">
               {message.content}
@@ -162,21 +162,23 @@ const MessageComponent = memo(({ message, prevMessage, createDiff, onFileOpen, o
       ) : (
         /* Claude/Error/Tool messages on the left - Claude.ai style: subtle beige/cream background */
         <div className="flex w-full items-start space-x-3">
-          {!isGrouped && (
-            message.type === 'error' ? (
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-red-600 text-sm text-white">
-                !
-              </div>
-            ) : message.type === 'tool' ? (
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-muted text-sm">
-                🔧
-              </div>
-            ) : (
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-900/20 p-1.5">
-                <SessionProviderLogo provider={provider} className="h-full w-full" />
-              </div>
-            )
-          )}
+          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center">
+            {!isGrouped && (
+              message.type === 'error' ? (
+                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-red-600 text-sm text-white">
+                  !
+                </div>
+              ) : message.type === 'tool' ? (
+                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-muted text-sm">
+                  🔧
+                </div>
+              ) : (
+                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-900/20 p-1.5">
+                  <SessionProviderLogo provider={provider} className="h-full w-full" />
+                </div>
+              )
+            )}
+          </div>
 
           <div className="max-w-2xl flex-1 rounded-2xl bg-gray-100 dark:bg-gray-800 border border-gray-200/60 dark:border-gray-700/60 px-4 py-3 shadow-sm">
             {message.isToolUse ? (
