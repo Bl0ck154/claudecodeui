@@ -181,6 +181,22 @@ You have access to the files and code in this directory. When the user asks abou
     const decoder = new TextDecoder('utf-8', { fatal: false });
     let incompleteBytes = Buffer.alloc(0);
 
+    // Batch deltas to avoid sending incomplete UTF-8 sequences
+    let deltaBuffer = '';
+    let deltaTimer = null;
+    const flushDeltas = () => {
+      if (deltaBuffer && deltaBuffer.length > 0) {
+        writer.send({
+          kind: 'stream_delta',
+          content: deltaBuffer,
+          sessionId,
+          timestamp: new Date().toISOString()
+        });
+        deltaBuffer = '';
+      }
+      deltaTimer = null;
+    };
+
     try {
       for await (const chunk of response.body) {
         hasReceivedData = true;
@@ -242,15 +258,22 @@ You have access to the files and code in this directory. When the user asks abou
             if (event.type === 'content_block_delta' && event.delta?.text) {
               console.log('[Claude API] Sending text:', event.delta.text);
               accumulatedText += event.delta.text;
-              writer.send({
-                kind: 'stream_delta',
-                content: event.delta.text,
-                sessionId,
-                timestamp: new Date().toISOString()
-              });
+
+              // Batch deltas with timer to avoid incomplete UTF-8
+              deltaBuffer += event.delta.text;
+              if (deltaTimer) {
+                clearTimeout(deltaTimer);
+              }
+              deltaTimer = setTimeout(flushDeltas, 50);
             }
 
             if (event.type === 'message_stop') {
+              // Flush any remaining deltas
+              if (deltaTimer) {
+                clearTimeout(deltaTimer);
+                flushDeltas();
+              }
+
               writer.send({
                 kind: 'stream_end',
                 sessionId,
