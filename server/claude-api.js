@@ -132,6 +132,14 @@ export async function queryClaudeAPI(command, options, writer) {
 
     console.log('[Claude API] Sending', messages.length, 'messages to API');
 
+    // Build system prompt with working directory context
+    const workingDir = options?.projectPath || process.cwd();
+    const systemPrompt = `You are Claude, a helpful AI assistant.
+
+Current working directory: ${workingDir}
+
+You have access to the files and code in this directory. When the user asks about the project, refer to files in this location.`;
+
     // Make API request
     const response = await fetch(`${apiUrl}/messages`, {
       method: 'POST',
@@ -143,6 +151,7 @@ export async function queryClaudeAPI(command, options, writer) {
       body: JSON.stringify({
         model,
         messages,
+        system: systemPrompt,
         max_tokens: 4096,
         stream: true
       })

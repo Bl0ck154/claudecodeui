@@ -50,6 +50,15 @@ export function normalizedToChatMessages(messages: NormalizedMessage[]): ChatMes
           let text = decodeHtmlEntities(content);
           text = unescapeWithMathProtection(text);
           text = formatUsageLimitText(text);
+
+          // Filter out Claude Code system tags
+          text = text.replace(/<attempt_completion>[\s\S]*?<\/attempt_completion>/g, '');
+          text = text.replace(/<system-reminder>[\s\S]*?<\/system-reminder>/g, '');
+          text = text.replace(/<task-notification>[\s\S]*?<\/task-notification>/g, '');
+          text = text.replace(/<command-name>[\s\S]*?<\/command-name>/g, '');
+          text = text.replace(/<function_calls>[\s\S]*?<\/antml:function_calls>/g, '');
+          text = text.replace(/<invoke[\s\S]*?<\/antml:invoke>/g, '');
+
           // Remove agent name and timestamp from responses - more precise patterns
           text = text.replace(/^(Claude|Assistant|Agent)\s*\*\*\d{1,2}:\d{2}(:\d{2})?\s*(AM|PM)?\*\*\.?\s*/i, '');
           text = text.replace(/^Claude[\s\n]+/i, '');
