@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
 import SessionProviderLogo from '../../../llm-logo-provider/SessionProviderLogo';
 import type { AppTab, Project, ProjectSession } from '../../../../types/app';
 import { usePlugins } from '../../../../contexts/PluginsContext';
@@ -49,6 +50,7 @@ export default function MainContentTitle({
 }: MainContentTitleProps) {
   const { t } = useTranslation();
   const { plugins } = usePlugins();
+  const [showCopied, setShowCopied] = useState(false);
 
   const pluginDisplayName = activeTab.startsWith('plugin:')
     ? plugins.find((p) => p.name === activeTab.replace('plugin:', ''))?.displayName
@@ -60,19 +62,13 @@ export default function MainContentTitle({
   const handleProjectPathClick = async () => {
     const fullPath = selectedProject.fullPath || selectedProject.name;
 
-    // Try to copy to clipboard
+    // Copy to clipboard
     try {
       await navigator.clipboard.writeText(fullPath);
+      setShowCopied(true);
+      setTimeout(() => setShowCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy path:', err);
-    }
-
-    // Try to open in file explorer
-    try {
-      // Use file:// protocol to open in explorer
-      window.open(`file:///${fullPath}`, '_blank');
-    } catch (err) {
-      console.error('Failed to open in explorer:', err);
     }
   };
 
@@ -91,22 +87,28 @@ export default function MainContentTitle({
               {getSessionTitle(selectedSession)}
             </h2>
             <div
-              className="truncate text-[11px] leading-tight text-muted-foreground cursor-pointer hover:text-foreground transition-colors select-text"
+              className="truncate text-[11px] leading-tight text-muted-foreground cursor-pointer hover:text-foreground transition-colors select-text relative"
               onClick={handleProjectPathClick}
-              title={`Click to copy: ${selectedProject.fullPath || selectedProject.name}`}
+              title="Click to copy path"
             >
-              {selectedProject.displayName}
+              {selectedProject.fullPath || selectedProject.name}
+              {showCopied && (
+                <span className="ml-2 text-green-500 font-medium">Copied!</span>
+              )}
             </div>
           </div>
         ) : showChatNewSession ? (
           <div className="min-w-0">
             <h2 className="text-base font-semibold leading-tight text-foreground">{t('mainContent.newSession')}</h2>
             <div
-              className="truncate text-xs leading-tight text-muted-foreground cursor-pointer hover:text-foreground transition-colors select-text"
+              className="truncate text-xs leading-tight text-muted-foreground cursor-pointer hover:text-foreground transition-colors select-text relative"
               onClick={handleProjectPathClick}
-              title={`Click to copy: ${selectedProject.fullPath || selectedProject.name}`}
+              title="Click to copy path"
             >
-              {selectedProject.displayName}
+              {selectedProject.fullPath || selectedProject.name}
+              {showCopied && (
+                <span className="ml-2 text-green-500 font-medium">Copied!</span>
+              )}
             </div>
           </div>
         ) : (
@@ -115,11 +117,14 @@ export default function MainContentTitle({
               {getTabTitle(activeTab, shouldShowTasksTab, t, pluginDisplayName)}
             </h2>
             <div
-              className="truncate text-[11px] leading-tight text-muted-foreground cursor-pointer hover:text-foreground transition-colors select-text"
+              className="truncate text-[11px] leading-tight text-muted-foreground cursor-pointer hover:text-foreground transition-colors select-text relative"
               onClick={handleProjectPathClick}
-              title={`Click to copy: ${selectedProject.fullPath || selectedProject.name}`}
+              title="Click to copy path"
             >
-              {selectedProject.displayName}
+              {selectedProject.fullPath || selectedProject.name}
+              {showCopied && (
+                <span className="ml-2 text-green-500 font-medium">Copied!</span>
+              )}
             </div>
           </div>
         )}
