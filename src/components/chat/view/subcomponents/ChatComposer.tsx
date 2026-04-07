@@ -156,12 +156,13 @@ export default function ChatComposer({
 
   // On mobile, when input is focused, float the input box at the bottom
   const mobileFloatingClass = isInputFocused
-    ? 'max-sm:fixed max-sm:bottom-0 max-sm:left-0 max-sm:right-0 max-sm:z-50 max-sm:bg-background max-sm:shadow-[0_-4px_20px_rgba(0,0,0,0.15)]'
+    ? 'max-sm:fixed max-sm:left-0 max-sm:right-0 max-sm:z-50'
     : '';
 
   return (
-    <div className={`flex-shrink-0 ${mobileFloatingClass}`}>
-      <div className="mx-auto mb-3 max-w-3xl px-4">
+    <div className="absolute bottom-0 left-0 right-0 flex justify-center pointer-events-none z-10 pb-4">
+      <div className={`w-full max-w-3xl pointer-events-auto ${mobileFloatingClass}`}>
+      <div className="mx-auto px-0 md:px-4">
         <PermissionRequestsBanner
           pendingPermissionRequests={pendingPermissionRequests}
           handlePermissionDecision={handlePermissionDecision}
@@ -169,7 +170,7 @@ export default function ChatComposer({
         />
       </div>
 
-      {!hasQuestionPanel && <form onSubmit={onSubmit as (event: FormEvent<HTMLFormElement>) => void} className="relative mx-auto max-w-3xl px-4">
+      {!hasQuestionPanel && <form onSubmit={onSubmit as (event: FormEvent<HTMLFormElement>) => void} className="relative mx-auto px-4">
         {isDragActive && (
           <div className="absolute inset-0 z-50 flex items-center justify-center rounded-2xl border-2 border-dashed border-primary/50 bg-primary/15">
             <div className="rounded-xl border border-border/30 bg-card p-4 shadow-lg">
@@ -241,7 +242,7 @@ export default function ChatComposer({
 
         <div
           {...getRootProps()}
-          className={`relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm transition-all duration-200 focus-within:border-gray-400 dark:focus-within:border-gray-500 focus-within:shadow-md ${
+          className={`relative overflow-hidden rounded-xl border-2 border-gray-500/80 dark:border-gray-400/80 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md transition-all duration-200 focus-within:border-gray-600 dark:focus-within:border-gray-300 focus-within:bg-white/90 dark:focus-within:bg-gray-800/90 ${
             isTextareaExpanded ? 'chat-input-expanded' : ''
           }`}
         >
@@ -265,7 +266,7 @@ export default function ChatComposer({
               onBlur={() => onInputFocusChange?.(false)}
               onInput={onTextareaInput}
               placeholder={placeholder}
-              className="chat-input-placeholder block max-h-[40vh] min-h-[48px] w-full resize-none overflow-y-auto bg-transparent py-3 pl-3 pr-3 pb-12 text-base leading-6 text-foreground placeholder-muted-foreground/60 transition-all duration-200 focus:outline-none sm:max-h-[300px] sm:min-h-[48px] sm:py-3 sm:pr-3 sm:pb-12"
+              className="chat-input-placeholder block max-h-[40vh] min-h-[48px] w-full resize-none overflow-y-auto bg-transparent py-2 pl-3 pr-3 pb-12 text-base leading-6 text-foreground placeholder-muted-foreground/60 transition-all duration-200 focus:outline-none sm:max-h-[300px] sm:min-h-[48px] sm:py-3 sm:pr-3 sm:pb-12"
               style={{ height: '48px' }}
             />
 
@@ -374,7 +375,6 @@ export default function ChatComposer({
                 type="button"
                 disabled={!input.trim()}
                 onClick={(event) => {
-                  event.preventDefault();
                   onSubmit(event);
                 }}
                 className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-900 dark:bg-gray-100 transition-all duration-200 hover:bg-gray-800 dark:hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400/30 disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground"
@@ -387,25 +387,7 @@ export default function ChatComposer({
           </div>
         </div>
       </form>}
-
-      {!hasQuestionPanel && (
-        <div className="mx-auto mt-2 max-w-3xl px-4">
-          <ChatInputControls
-            permissionMode={permissionMode}
-            onModeSwitch={onModeSwitch}
-            provider={provider}
-            thinkingMode={thinkingMode}
-            setThinkingMode={setThinkingMode}
-            slashCommandsCount={slashCommandsCount}
-            onToggleCommandMenu={onToggleCommandMenu}
-            hasInput={hasInput}
-            onClearInput={onClearInput}
-            isUserScrolledUp={isUserScrolledUp}
-            hasMessages={hasMessages}
-            onScrollToBottom={onScrollToBottom}
-          />
-        </div>
-      )}
+      </div>
     </div>
   );
 }

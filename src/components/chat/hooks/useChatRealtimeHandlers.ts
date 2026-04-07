@@ -100,6 +100,57 @@ export function useChatRealtimeHandlers({
   sessionStore,
 }: UseChatRealtimeHandlersArgs) {
   const lastProcessedMessageRef = useRef<LatestChatMessage | null>(null);
+  const responseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clear timeout when component unmounts or when loading completes
+  useEffect(() => {
+    return () => {
+      if (responseTimeoutRef.current) {
+        clearTimeout(responseTimeoutRef.current);
+        responseTimeoutRef.current = null;
+      }
+    };
+  }, []);
+
+  // Set 30-second timeout when loading starts
+  useEffect(() => {
+    if (!latestMessage) return;
+
+    const msg = latestMessage as any;
+    const isLoadingMessage = msg.kind === 'status' || msg.kind === 'permission_request' ||
+                             (msg.type === 'session-status' && msg.isProcessing);
+
+    if (isLoadingMessage) {
+      // Clear any existing timeout
+      if (responseTimeoutRef.current) {
+        clearTimeout(responseTimeoutRef.current);
+      }
+
+      // Set 30-second timeout
+      responseTimeoutRef.current = setTimeout(() => {
+        console.warn('Response timeout: No response received in 30 seconds, clearing loading state');
+        setIsLoading(false);
+        setCanAbortSession(false);
+        setClaudeStatus(null);
+
+        // Add error message to store
+        const sid = selectedSession?.id || currentSessionId;
+        if (sid) {
+          const errorMsg: NormalizedMessage = {
+            id: `timeout_${Date.now()}`,
+            sessionId: sid,
+            timestamp: new Date().toISOString(),
+            provider,
+            kind: 'error',
+            content: 'Request timed out after 30 seconds. Please try again.',
+          };
+          sessionStore.appendRealtime(sid, errorMsg);
+        }
+
+        responseTimeoutRef.current = null;
+      }, 30000);
+    }
+  }, [latestMessage, setIsLoading, setCanAbortSession, setClaudeStatus, selectedSession?.id, currentSessionId, provider, sessionStore]);
 
   useEffect(() => {
     if (!latestMessage) return;
@@ -146,6 +197,12 @@ export function useChatRealtimeHandlers({
             setClaudeStatus(statusInfo);
             setIsLoading(true);
             setCanAbortSession(statusInfo.can_interrupt);
+
+            // Clear timeout when we get a status update
+            if (responseTimeoutRef.current) {
+              clearTimeout(responseTimeoutRef.current);
+              responseTimeoutRef.current = null;
+            }
             return;
           }
 
@@ -164,6 +221,12 @@ export function useChatRealtimeHandlers({
             setIsLoading(false);
             setCanAbortSession(false);
             setClaudeStatus(null);
+
+            // Clear timeout when session becomes inactive
+            if (responseTimeoutRef.current) {
+              clearTimeout(responseTimeoutRef.current);
+              responseTimeoutRef.current = null;
+            }
           }
           return;
         }
@@ -211,6 +274,17 @@ export function useChatRealtimeHandlers({
       }
       accumulatedStreamRef.current = '';
       streamBufferRef.current = '';
+
+      // Hide "Processing..." indicator when streaming ends
+      setIsLoading(false);
+      setClaudeStatus(null);
+
+      // Clear timeout when streaming ends
+      if (responseTimeoutRef.current) {
+        clearTimeout(responseTimeoutRef.current);
+        responseTimeoutRef.current = null;
+      }
+
       return;
     }
 
@@ -265,6 +339,12 @@ export function useChatRealtimeHandlers({
         onSessionInactive?.(sid);
         onSessionNotProcessing?.(sid);
 
+        // Clear timeout when complete
+        if (responseTimeoutRef.current) {
+          clearTimeout(responseTimeoutRef.current);
+          responseTimeoutRef.current = null;
+        }
+
         // Handle aborted case
         if (msg.aborted) {
           // Abort was requested — the complete event confirms it
@@ -295,6 +375,12 @@ export function useChatRealtimeHandlers({
         setClaudeStatus(null);
         onSessionInactive?.(sid);
         onSessionNotProcessing?.(sid);
+
+        // Clear timeout on error
+        if (responseTimeoutRef.current) {
+          clearTimeout(responseTimeoutRef.current);
+          responseTimeoutRef.current = null;
+        }
         break;
       }
 
@@ -375,6 +461,10 @@ export function useChatRealtimeHandlers({
       if (streamTimerRef.current) {
         clearTimeout(streamTimerRef.current);
         streamTimerRef.current = null;
+      }
+      if (responseTimeoutRef.current) {
+        clearTimeout(responseTimeoutRef.current);
+        responseTimeoutRef.current = null;
       }
     };
   }, []);

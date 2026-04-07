@@ -90,6 +90,34 @@ export default function SidebarSessionItem({
           <div className="text-xs font-normal mt-1 ml-6 text-gray-500 dark:text-gray-400">
             {formatTimeAgo(sessionView.sessionTime, currentTime, t)}
           </div>
+
+          {/* Mobile actions - show when selected */}
+          {isSelected && (
+            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5">
+              <button
+                className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onStartEditingSession(session.id, sessionView.sessionName);
+                }}
+                aria-label={t('tooltips.editSessionName')}
+              >
+                <Edit2 className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+              </button>
+              {!sessionView.isCursorSession && (
+                <button
+                  className="p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    requestDeleteSession();
+                  }}
+                  aria-label={t('tooltips.deleteSession')}
+                >
+                  <Trash2 className="h-4 w-4 text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-500" />
+                </button>
+              )}
+            </div>
+          )}
         </button>
       </div>
 

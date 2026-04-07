@@ -93,6 +93,7 @@
     "arrowUp": "Arrow Up",
     "arrowDown": "Arrow Down",
     "scrollDown": "Scroll Down",
+    "paste": "Paste",
     "handle": {
       "closePanel": "Close shortcuts panel",
       "openPanel": "Open shortcuts panel"

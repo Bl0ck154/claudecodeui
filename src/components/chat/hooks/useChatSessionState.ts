@@ -175,9 +175,27 @@ export function useChatSessionState({
     if (pendingUserMessage && all.length === 0) {
       return [pendingUserMessage];
     }
-    if (viewHiddenCount > 0 && viewHiddenCount < all.length) return all.slice(0, -viewHiddenCount);
-    return all;
-  }, [storeMessages, viewHiddenCount, pendingUserMessage]);
+
+    // Add temporary "Thinking..." message when loading
+    // Only add if the last message is not already from assistant (to avoid showing during streaming)
+    let result = all;
+    if (isLoading) {
+      const lastMessage = all[all.length - 1];
+      const shouldShowLoadingIndicator = !lastMessage || lastMessage.type !== 'assistant';
+
+      if (shouldShowLoadingIndicator) {
+        const statusText = claudeStatus?.text || 'Thinking';
+        result = [...all, {
+          type: 'assistant' as const,
+          content: statusText + '...',
+          timestamp: new Date().toISOString(),
+        }];
+      }
+    }
+
+    if (viewHiddenCount > 0 && viewHiddenCount < result.length) return result.slice(0, -viewHiddenCount);
+    return result;
+  }, [storeMessages, viewHiddenCount, pendingUserMessage, isLoading, claudeStatus]);
 
   /* ---------------------------------------------------------------- */
   /*  addMessage / clearMessages / rewindMessages                     */
@@ -592,6 +610,13 @@ export function useChatSessionState({
     const heightDiff = newHeight - prevHeight;
     if (heightDiff > 0 && prevTop > 0) container.scrollTop = prevTop + heightDiff;
   }, [autoScrollToBottom, chatMessages.length, isLoadingMoreMessages, isUserScrolledUp, scrollToBottom]);
+
+  // Auto-scroll when new messages arrive during loading
+  useEffect(() => {
+    if (isLoading && chatMessages.length > 0) {
+      setTimeout(() => scrollToBottom(), 100);
+    }
+  }, [chatMessages.length, isLoading, scrollToBottom]);
 
   useEffect(() => {
     const container = scrollContainerRef.current;

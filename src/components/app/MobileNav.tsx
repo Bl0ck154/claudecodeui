@@ -81,8 +81,9 @@ export default function MobileNav({ activeTab, setActiveTab, isInputFocused }: M
 
   return (
     <div
-      className={`fixed bottom-0 left-0 right-0 z-50 transform px-3 pb-[max(8px,env(safe-area-inset-bottom))] transition-transform duration-300 ease-in-out ${isInputFocused ? 'translate-y-full' : 'translate-y-0'
-        }`}
+      className={`fixed bottom-0 left-0 right-0 z-50 transform px-3 pb-[max(8px,env(safe-area-inset-bottom))] transition-transform duration-300 ease-in-out ${
+        isInputFocused || activeTab === 'chat' || activeTab === 'shell' ? 'translate-y-full' : 'translate-y-0'
+      }`}
     >
       <div className="nav-glass mobile-nav-float rounded-2xl border border-border/30">
         <div className="flex items-center justify-around gap-0.5 px-1 py-1.5">

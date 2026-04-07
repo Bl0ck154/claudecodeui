@@ -28,6 +28,11 @@ export function normalizeMessage(raw, sessionId) {
     return [createNormalizedMessage({ kind: 'stream_end', sessionId, provider: PROVIDER })];
   }
 
+  // ── Claude CLI result event (non-streaming mode) ──────────────────────────
+  if (raw.type === 'result') {
+    return [createNormalizedMessage({ kind: 'complete', sessionId, provider: PROVIDER })];
+  }
+
   // ── History / full-message events ────────────────────────────────────────
   const messages = [];
   const ts = raw.timestamp || new Date().toISOString();

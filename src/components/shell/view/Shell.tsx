@@ -172,6 +172,40 @@ export default function Shell({
     };
   }, [isActive, isConnected, isInitialized, terminalRef]);
 
+  // Android keyboard adjustment using visualViewport API
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.visualViewport) return;
+
+    const handleViewportResize = () => {
+      const viewport = window.visualViewport;
+      if (!viewport || !terminalContainerRef.current) return;
+
+      const container = terminalContainerRef.current.closest('.relative.flex-1') as HTMLElement;
+      if (!container) return;
+
+      // Calculate keyboard height
+      const keyboardHeight = window.innerHeight - viewport.height;
+
+      if (keyboardHeight > 100) {
+        // Keyboard is open - adjust container
+        container.style.paddingBottom = `${keyboardHeight}px`;
+      } else {
+        // Keyboard is closed - reset
+        container.style.paddingBottom = '';
+      }
+    };
+
+    window.visualViewport.addEventListener('resize', handleViewportResize);
+    window.visualViewport.addEventListener('scroll', handleViewportResize);
+
+    return () => {
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleViewportResize);
+        window.visualViewport.removeEventListener('scroll', handleViewportResize);
+      }
+    };
+  }, [terminalContainerRef]);
+
   const sendInput = useCallback(
     (data: string) => {
       sendSocketMessage(wsRef.current, { type: 'input', data });
@@ -324,6 +358,7 @@ export default function Shell({
         wsRef={wsRef}
         terminalRef={terminalRef}
         isConnected={isConnected}
+        bottomOffset="bottom-0"
       />
 
     </div>

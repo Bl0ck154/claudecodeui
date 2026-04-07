@@ -16,6 +16,7 @@ import { decodeHtmlEntities, unescapeWithMathProtection, formatUsageLimitText } 
  */
 export function normalizedToChatMessages(messages: NormalizedMessage[]): ChatMessage[] {
   const converted: ChatMessage[] = [];
+  const seenIds = new Set<string>();
 
   // First pass: collect tool results for attachment
   const toolResultMap = new Map<string, NormalizedMessage>();
@@ -26,6 +27,14 @@ export function normalizedToChatMessages(messages: NormalizedMessage[]): ChatMes
   }
 
   for (const msg of messages) {
+    // Skip duplicate messages
+    if (msg.id && seenIds.has(msg.id)) {
+      continue;
+    }
+    if (msg.id) {
+      seenIds.add(msg.id);
+    }
+
     switch (msg.kind) {
       case 'text': {
         const content = msg.content || '';

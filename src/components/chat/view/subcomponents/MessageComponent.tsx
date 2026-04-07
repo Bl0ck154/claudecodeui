@@ -32,6 +32,10 @@ type MessageComponentProps = {
   showThinking?: boolean;
   selectedProject?: Project | null;
   provider: Provider | string;
+  isLoading?: boolean;
+  elapsedSeconds?: number;
+  onAbortSession?: () => void;
+  canAbortSession?: boolean;
 };
 
 type InteractiveOption = {
@@ -43,7 +47,7 @@ type InteractiveOption = {
 type PermissionGrantState = 'idle' | 'granted' | 'error';
 const COPY_HIDDEN_TOOL_NAMES = new Set(['Bash', 'Edit', 'Write', 'ApplyPatch']);
 
-const MessageComponent = memo(({ message, prevMessage, createDiff, onFileOpen, onShowSettings, onGrantToolPermission, autoExpandTools, showRawParameters, showThinking, selectedProject, provider }: MessageComponentProps) => {
+const MessageComponent = memo(({ message, prevMessage, createDiff, onFileOpen, onShowSettings, onGrantToolPermission, autoExpandTools, showRawParameters, showThinking, selectedProject, provider, isLoading, elapsedSeconds, onAbortSession, canAbortSession }: MessageComponentProps) => {
   const { t } = useTranslation('chat');
   const isGrouped = prevMessage && prevMessage.type === message.type &&
     ((prevMessage.type === 'assistant') ||
@@ -119,11 +123,11 @@ const MessageComponent = memo(({ message, prevMessage, createDiff, onFileOpen, o
     <div
       ref={messageRef}
       data-message-timestamp={message.timestamp || undefined}
-      className={`chat-message ${message.type} ${isGrouped ? 'grouped' : ''} px-4`}
+      className={`chat-message ${message.type} ${isGrouped ? 'grouped' : ''} pl-4 pr-0 md:px-4`}
     >
       {message.type === 'user' ? (
         /* User message bubble on the right - Claude.ai style: minimal, clean white */
-        <div className="flex w-full items-start justify-end space-x-3 pl-[21%] pr-[4%]">
+        <div className="flex w-full items-start justify-end space-x-3 pl-[10%] pr-0 md:pl-[21%] md:pr-0">
           <div className="group max-w-full rounded-2xl bg-white dark:bg-gray-900 border border-gray-200/60 dark:border-gray-700/60 px-4 py-3 shadow-sm">
             <div className="whitespace-pre-wrap break-words text-sm text-gray-900 dark:text-gray-100">
               {message.content}
@@ -448,9 +452,49 @@ const MessageComponent = memo(({ message, prevMessage, createDiff, onFileOpen, o
 
                   // Normal rendering for non-JSON content
                   return message.type === 'assistant' ? (
-                    <Markdown className="prose prose-sm prose-gray max-w-none dark:prose-invert">
-                      {content}
-                    </Markdown>
+                    <>
+                      {(() => {
+                        // Detect if content ends with "..." and isLoading is true
+                        if (isLoading && content.endsWith('...')) {
+                          const textWithoutDots = content.slice(0, -3);
+                          return (
+                            <div className="inline-flex items-baseline">
+                              <Markdown className="prose prose-sm prose-gray max-w-none dark:prose-invert inline">
+                                {textWithoutDots}
+                              </Markdown>
+                              <span className="inline-flex gap-0.5">
+                                <span className="animate-bounce" style={{ animationDelay: '0s' }}>.</span>
+                                <span className="animate-bounce" style={{ animationDelay: '0.2s' }}>.</span>
+                                <span className="animate-bounce" style={{ animationDelay: '0.4s' }}>.</span>
+                              </span>
+                            </div>
+                          );
+                        }
+                        return (
+                          <Markdown className="prose prose-sm prose-gray max-w-none dark:prose-invert">
+                            {content}
+                          </Markdown>
+                        );
+                      })()}
+                      {isLoading && elapsedSeconds !== undefined && onAbortSession && (
+                        <div className="mt-3 flex items-center gap-3 border-t border-gray-200 pt-3 dark:border-gray-700">
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            {Math.floor(elapsedSeconds / 60)}:{String(elapsedSeconds % 60).padStart(2, '0')}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={onAbortSession}
+                            disabled={!canAbortSession}
+                            className="inline-flex items-center gap-1.5 rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-red-500 dark:hover:bg-red-600"
+                          >
+                            <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            Stop
+                          </button>
+                        </div>
+                      )}
+                    </>
                   ) : (
                     <div className="whitespace-pre-wrap">
                       {content}
@@ -463,7 +507,7 @@ const MessageComponent = memo(({ message, prevMessage, createDiff, onFileOpen, o
             {(shouldShowAssistantCopyControl || !isGrouped) && (
               <div className="mt-1 flex w-full items-center gap-2 text-[11px] text-gray-500 dark:text-gray-500">
                 {shouldShowAssistantCopyControl && (
-                  <MessageCopyControl content={assistantCopyContent} messageType="assistant" />
+                  <MessageCopyControl content={assistantCopyContent} messageType="assistant" disabled={isLoading} />
                 )}
                 {!isGrouped && <span>{formattedTime}</span>}
               </div>

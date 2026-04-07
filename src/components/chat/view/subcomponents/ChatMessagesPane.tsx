@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Dispatch, RefObject, SetStateAction } from 'react';
 import type { ChatMessage } from '../../types/types';
 import type { Project, ProjectSession, SessionProvider } from '../../../../types/app';
@@ -108,6 +108,28 @@ export default function ChatMessagesPane({
   const messageKeyMapRef = useRef<WeakMap<ChatMessage, string>>(new WeakMap());
   const allocatedKeysRef = useRef<Set<string>>(new Set());
   const generatedMessageKeyCounterRef = useRef(0);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const loadingStartTimeRef = useRef<number | null>(null);
+
+  // Track elapsed time when loading
+  useEffect(() => {
+    if (isLoading) {
+      loadingStartTimeRef.current = Date.now();
+      setElapsedSeconds(0);
+
+      const interval = setInterval(() => {
+        if (loadingStartTimeRef.current) {
+          const elapsed = Math.floor((Date.now() - loadingStartTimeRef.current) / 1000);
+          setElapsedSeconds(elapsed);
+        }
+      }, 1000);
+
+      return () => clearInterval(interval);
+    } else {
+      loadingStartTimeRef.current = null;
+      setElapsedSeconds(0);
+    }
+  }, [isLoading]);
 
   // Keep keys stable across prepends so existing MessageComponent instances retain local state.
   const getMessageKey = useCallback((message: ChatMessage) => {
@@ -138,9 +160,9 @@ export default function ChatMessagesPane({
       ref={scrollContainerRef}
       onWheel={onWheel}
       onTouchMove={onTouchMove}
-      className="relative flex-1 space-y-6 overflow-y-auto overflow-x-hidden py-2"
+      className="relative space-y-6 overflow-y-auto overflow-x-hidden py-2 pb-32 md:pb-32 absolute inset-0"
     >
-      <div className="mx-auto max-w-3xl px-4">
+      <div className="mx-auto max-w-3xl pl-4 pr-0 md:px-4">
       {isLoadingSessionMessages && chatMessages.length === 0 ? (
         <div className="mt-8 text-center text-gray-500 dark:text-gray-500">
           <div className="flex items-center justify-center space-x-2">
@@ -248,6 +270,9 @@ export default function ChatMessagesPane({
 
           {visibleMessages.map((message, index) => {
             const prevMessage = index > 0 ? visibleMessages[index - 1] : null;
+            const isLastMessage = index === visibleMessages.length - 1;
+            const isLoadingMessage = isLoading && isLastMessage && message.type === 'assistant';
+
             return (
               <MessageComponent
                 key={getMessageKey(message)}
@@ -262,17 +287,15 @@ export default function ChatMessagesPane({
                 showThinking={showThinking}
                 selectedProject={selectedProject}
                 provider={provider}
+                isLoading={isLoadingMessage}
+                elapsedSeconds={isLoadingMessage ? elapsedSeconds : undefined}
+                onAbortSession={isLoadingMessage ? onAbortSession : undefined}
+                canAbortSession={claudeStatus?.can_interrupt ?? false}
               />
             );
           })}
 
-          {/* ClaudeStatus appears inline with messages */}
-          <ClaudeStatus
-            status={claudeStatus}
-            isLoading={isLoading}
-            onAbort={onAbortSession}
-            provider={provider}
-          />
+          {/* ClaudeStatus removed - now showing as temporary message in chatMessages */}
         </>
       )}
       </div>

@@ -1,7 +1,7 @@
 import { spawn } from 'child_process';
 import crossSpawn from 'cross-spawn';
 import { notifyRunFailed, notifyRunStopped } from './services/notification-orchestrator.js';
-import { claudeAdapter } from './providers/claude/adapter.js';
+import { normalizeMessage } from './providers/claude/adapter.js';
 import { createNormalizedMessage } from './providers/types.js';
 
 // Use cross-spawn on Windows for better command execution
@@ -27,9 +27,8 @@ async function spawnClaude(command, options = {}, ws) {
     if (command && command.trim()) {
       baseArgs.push('-p', command);
 
-      if (!sessionId && model) {
-        baseArgs.push('--model', model);
-      }
+      // Don't pass --model flag - let Claude CLI use model from ~/.claude/settings.json
+      // This avoids OmniRoute ambiguity errors
 
       baseArgs.push('--output-format', 'stream-json', '--verbose');
     }
@@ -87,8 +86,12 @@ async function spawnClaude(command, options = {}, ws) {
       const processClaudeOutputLine = (line) => {
         if (!line || !line.trim()) return;
 
+        console.log('[Claude CLI] Raw line:', line.substring(0, 200));
+
+        // Try to parse as JSON first
         try {
           const parsed = JSON.parse(line);
+          console.log('[Claude CLI] Parsed event type:', parsed.type);
 
           // Extract session ID from session_created event
           if (parsed.type === 'session_created' && parsed.session_id && !capturedSessionId) {
@@ -97,13 +100,28 @@ async function spawnClaude(command, options = {}, ws) {
           }
 
           // Convert to normalized message
-          const normalized = claudeAdapter(parsed, capturedSessionId || sessionId);
+          const normalized = normalizeMessage(parsed, capturedSessionId || sessionId);
+          console.log('[Claude CLI] Normalized messages count:', normalized?.length || 0);
 
-          if (normalized) {
-            ws.send(normalized);
+          if (normalized && normalized.length > 0) {
+            for (const msg of normalized) {
+              console.log('[Claude CLI] Sending message kind:', msg.kind);
+              ws.send(msg);
+            }
           }
         } catch (e) {
-          console.error('[Claude CLI] Parse error:', e.message);
+          // Not JSON - treat as plain text output from Claude
+          console.log('[Claude CLI] Plain text line (not JSON)');
+
+          // Send as stream delta
+          const normalized = createNormalizedMessage({
+            kind: 'stream_delta',
+            content: line + '\n',
+            sessionId: capturedSessionId || sessionId,
+            provider: 'claude',
+            timestamp: new Date().toISOString()
+          });
+          ws.send(normalized);
         }
       };
 
@@ -135,6 +153,15 @@ async function spawnClaude(command, options = {}, ws) {
         if (stdoutLineBuffer.trim()) {
           processClaudeOutputLine(stdoutLineBuffer);
         }
+
+        // Send complete event to hide "Processing..." indicator
+        const completeMsg = createNormalizedMessage({
+          kind: 'complete',
+          sessionId: capturedSessionId || sessionId,
+          provider: 'claude',
+          timestamp: new Date().toISOString()
+        });
+        ws.send(completeMsg);
 
         notifyTerminalState({ code });
         settleOnce(() => {

@@ -299,7 +299,7 @@ function ChatInterface({
 
   return (
     <>
-      <div className="flex h-full flex-col">
+      <div className="flex h-full flex-col bg-transparent relative">
         <ChatMessagesPane
           scrollContainerRef={scrollContainerRef}
           onWheel={handleScroll}

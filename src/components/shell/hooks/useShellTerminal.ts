@@ -159,19 +159,24 @@ export function useShellTerminal({
       if (
         event.type === 'keydown' &&
         (event.ctrlKey || event.metaKey) &&
-        event.key?.toLowerCase() === 'c' &&
-        nextTerminal.hasSelection()
+        event.code === 'KeyC'
       ) {
+        // Always block Ctrl+C to prevent terminal interrupt behavior
         event.preventDefault();
         event.stopPropagation();
-        void copyTerminalSelection();
+
+        // Only copy if there's a selection
+        if (nextTerminal.hasSelection()) {
+          void copyTerminalSelection();
+        }
+
         return false;
       }
 
       if (
         event.type === 'keydown' &&
         (event.ctrlKey || event.metaKey) &&
-        event.key?.toLowerCase() === 'v'
+        event.code === 'KeyV'
       ) {
         // Block native paste so data is only injected after clipboard-read resolves.
         event.preventDefault();

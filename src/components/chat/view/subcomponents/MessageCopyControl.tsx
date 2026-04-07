@@ -39,9 +39,11 @@ const convertMarkdownToPlainText = (markdown: string): string => {
 const MessageCopyControl = ({
   content,
   messageType,
+  disabled = false,
 }: {
   content: string;
   messageType: 'user' | 'assistant';
+  disabled?: boolean;
 }) => {
   const { t } = useTranslation('chat');
   const canSelectCopyFormat = messageType === 'assistant';
@@ -107,7 +109,7 @@ const MessageCopyControl = ({
   }, []);
 
   const handleCopyClick = async () => {
-    if (!copyPayload.trim()) return;
+    if (disabled || !copyPayload.trim()) return;
     const didCopy = await copyTextToClipboard(copyPayload);
     if (!didCopy) return;
 
@@ -128,6 +130,7 @@ const MessageCopyControl = ({
   const toneClass = messageType === 'user'
     ? 'text-blue-100 hover:text-white'
     : 'text-gray-500 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300';
+  const disabledClass = disabled ? 'opacity-50 cursor-not-allowed' : '';
   const copyTitle = copied ? t('copyMessage.copied') : t('copyMessage.copy');
   const rootClassName = canSelectCopyFormat
     ? 'relative flex min-w-0 flex-1 items-center gap-0.5 sm:min-w-max sm:flex-none sm:w-auto'
@@ -140,7 +143,8 @@ const MessageCopyControl = ({
         onClick={handleCopyClick}
         title={copyTitle}
         aria-label={copyTitle}
-        className={`inline-flex items-center gap-1 rounded px-1 py-0.5 transition-colors ${toneClass}`}
+        disabled={disabled}
+        className={`inline-flex items-center gap-1 rounded px-1 py-0.5 transition-colors ${toneClass} ${disabledClass}`}
       >
         {copied ? (
           <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">

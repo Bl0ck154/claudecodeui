@@ -1058,8 +1058,20 @@ async function getSessionMessages(projectName, sessionId, limit = null, offset =
         }
       }
     }
+
+    // Deduplicate messages by uuid or id
+    const seen = new Set();
+    const deduplicatedMessages = messages.filter(msg => {
+      const key = msg.uuid || msg.id || msg.message?.id;
+      if (!key || seen.has(key)) {
+        return false;
+      }
+      seen.add(key);
+      return true;
+    });
+
     // Sort messages by timestamp
-    const sortedMessages = messages.sort((a, b) =>
+    const sortedMessages = deduplicatedMessages.sort((a, b) =>
       new Date(a.timestamp || 0) - new Date(b.timestamp || 0)
     );
 

@@ -1572,9 +1572,8 @@ function handleChatConnection(ws, request) {
                 } else if (provider === 'gemini') {
                     isActive = isGeminiSessionActive(sessionId);
                 } else {
-                    // Use Claude Agents SDK
-                    isActive = isClaudeAPISessionActive(sessionId);
-                    // TODO: Implement session reconnection for direct API calls
+                    // Use Claude CLI
+                    isActive = isClaudeSessionActive(sessionId);
                 }
 
                 writer.send({
